@@ -1,35 +1,5 @@
-:root {
-  --admin-sidebar-width: 260px;
-  --admin-sidebar-collapsed-width: 60px;
-  --admin-header-height: 64px;
-  --admin-primary: #2563eb;
-  --admin-dark: #1e293b;
-}
-
-.admin-wrapper {
-  display: flex;
-  min-height: 100vh;
-  background: #f8fafc;
-
-  .main-content {
-    flex: 1;
-    margin-left: var(--admin-sidebar-width);
-    transition: margin-left 0.3s ease;
-
-    &.sidebar-collapsed {
-      margin-left: var(--admin-sidebar-collapsed-width);
-    }
-  }
-
-  .content-area {
-    padding: 1.5rem;
-    min-height: calc(100vh - var(--admin-header-height));
-  }
-}
-
-// Admin Header Styles
 .admin-header {
-  height: var(--admin-header-height);
+  height: 64px;
   background: white;
   border-bottom: 1px solid #e2e8f0;
   display: flex;

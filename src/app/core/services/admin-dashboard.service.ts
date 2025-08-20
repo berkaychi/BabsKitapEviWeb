@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface DashboardStats {
@@ -37,7 +37,21 @@ export class AdminDashboardService {
   constructor(private http: HttpClient) {}
 
   getDashboardStats(): Observable<DashboardStats> {
-    return this.http.get<DashboardStats>(`${this.apiUrl}/dashboard/stats`);
+    // Geçici mock data - gerçek API'ye bağlandığında bu kısım değişecek
+    const mockStats: DashboardStats = {
+      totalBooks: 1250,
+      totalUsers: 850,
+      totalOrders: 320,
+      totalRevenue: 45200,
+      newUsersToday: 12,
+      ordersToday: 8,
+      lowStockBooks: 15,
+      pendingOrders: 5,
+    };
+
+    return of(mockStats);
+    // Gerçek API için:
+    // return this.http.get<DashboardStats>(`${this.apiUrl}/dashboard/stats`);
   }
 
   getSalesData(days: number = 30): Observable<SalesData[]> {

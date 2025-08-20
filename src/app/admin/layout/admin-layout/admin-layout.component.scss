@@ -1,0 +1,42 @@
+:root {
+  --admin-sidebar-width: 260px;
+  --admin-sidebar-collapsed-width: 60px;
+  --admin-header-height: 64px;
+  --admin-primary: #2563eb;
+  --admin-dark: #1e293b;
+}
+
+.admin-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #f8fafc;
+
+  &__body {
+    display: flex;
+    flex: 1;
+    min-height: calc(100vh - var(--admin-header-height));
+  }
+
+  &__content {
+    flex: 1;
+    margin-left: var(--admin-sidebar-width);
+    padding: 1.5rem;
+    transition: margin-left 0.3s ease;
+    background: #f8fafc;
+    min-height: calc(100vh - var(--admin-header-height));
+
+    &.expanded {
+      margin-left: var(--admin-sidebar-collapsed-width);
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .admin-layout {
+    &__content {
+      margin-left: 0;
+    }
+  }
+}

@@ -1,3 +1,11 @@
+:root {
+  --admin-sidebar-width: 260px;
+  --admin-sidebar-collapsed-width: 60px;
+  --admin-header-height: 64px;
+  --admin-primary: #2563eb;
+  --admin-dark: #1e293b;
+}
+
 .admin-sidebar {
   width: var(--admin-sidebar-width);
   background: var(--admin-dark);

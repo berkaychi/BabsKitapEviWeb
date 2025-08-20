@@ -1,16 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-interface DashboardStats {
-  totalBooks: number;
-  totalUsers: number;
-  totalOrders: number;
-  totalRevenue: number;
-  newUsersToday: number;
-  ordersToday: number;
-  lowStockBooks: number;
-  pendingOrders: number;
-}
+import { DashboardStats } from '../../../../../core/services/admin-dashboard.service';
 
 interface StatCard {
   title: string;

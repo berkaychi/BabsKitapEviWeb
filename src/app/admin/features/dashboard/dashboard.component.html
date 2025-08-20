@@ -1,0 +1,5 @@
+<div class="dashboard" *ngIf="stats as s">
+  <app-stats-cards [stats]="s"></app-stats-cards>
+</div>
+<div *ngIf="!stats" class="text-muted">Loading...</div>
+
