@@ -14,30 +14,8 @@ interface MenuItem {
   selector: 'app-admin-sidebar',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  template: `
-    <div class="admin-sidebar" [class.collapsed]="collapsed">
-      <div class="sidebar-header">
-        <h5 *ngIf="!collapsed">Admin Panel</h5>
-        <i *ngIf="collapsed" class="bi bi-gear-fill"></i>
-      </div>
-
-      <nav class="sidebar-nav">
-        <ul class="nav-list">
-          <li *ngFor="let item of menuItems" class="nav-item">
-            <a
-              [routerLink]="item.route"
-              routerLinkActive="active"
-              class="nav-link"
-            >
-              <i [class]="'bi ' + item.icon"></i>
-              <span *ngIf="!collapsed">{{ item.label }}</span>
-            </a>
-          </li>
-        </ul>
-      </nav>
-    </div>
-  `,
-  styleUrls: ['./admin-layout.component.scss'],
+  templateUrl: './admin-sidebar.component.html',
+  styleUrls: ['./admin-sidebar.component.scss'],
 })
 export class AdminSidebarComponent {
   @Input() collapsed = false;
