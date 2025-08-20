@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './features/home/home.component';
-import { LoginComponent } from './features/auth/components/login/login.component';
-import { RegisterComponent } from './features/auth/components/register/register.component';
+import { HomeComponent } from './client/features/home/home.component';
+import { LoginComponent } from './client/features/auth/components/login/login.component';
+import { RegisterComponent } from './client/features/auth/components/register/register.component';
 import { authGuard } from './core/guards/auth.guard';
-import { CategoriesComponent } from './features/books/components/categories/categories.component';
+import { CategoriesComponent } from './client/features/books/components/categories/categories.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -18,15 +18,15 @@ export const routes: Routes = [
   {
     path: 'books',
     loadComponent: () =>
-      import('./features/books/components/book-list/book-list.component').then(
-        (m) => m.BookListComponent
-      ),
+      import(
+        './client/features/books/components/book-list/book-list.component'
+      ).then((m) => m.BookListComponent),
   },
   {
     path: 'book/:id',
     loadComponent: () =>
       import(
-        './features/books/components/book-detail/book-detail.component'
+        './client/features/books/components/book-detail/book-detail.component'
       ).then((m) => m.BookDetailComponent),
   },
   {
@@ -36,7 +36,7 @@ export const routes: Routes = [
       {
         path: '',
         loadComponent: () =>
-          import('./features/profile/profile.component').then(
+          import('./client/features/profile/profile.component').then(
             (m) => m.ProfileComponent
           ),
       },
@@ -44,14 +44,14 @@ export const routes: Routes = [
         path: 'addresses/new',
         loadComponent: () =>
           import(
-            './features/profile/components/address-form/address-form.component'
+            './client/features/profile/components/address-form/address-form.component'
           ).then((m) => m.AddressFormComponent),
       },
       {
         path: 'addresses/:id/edit',
         loadComponent: () =>
           import(
-            './features/profile/components/address-form/address-form.component'
+            './client/features/profile/components/address-form/address-form.component'
           ).then((m) => m.AddressFormComponent),
       },
     ],
@@ -59,32 +59,32 @@ export const routes: Routes = [
   {
     path: 'books/category/:categoryId',
     loadComponent: () =>
-      import('./features/books/components/book-list/book-list.component').then(
-        (m) => m.BookListComponent
-      ),
+      import(
+        './client/features/books/components/book-list/book-list.component'
+      ).then((m) => m.BookListComponent),
   },
   {
     path: 'cart',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./features/cart/components/cart-view/cart-view.component').then(
-        (m) => m.CartViewComponent
-      ),
+      import(
+        './client/features/cart/components/cart-view/cart-view.component'
+      ).then((m) => m.CartViewComponent),
   },
   { path: 'categories', component: CategoriesComponent },
   {
     path: 'publishers',
     loadComponent: () =>
       import(
-        './features/books/components/publishers/publishers.component'
+        './client/features/books/components/publishers/publishers.component'
       ).then((m) => m.PublishersComponent),
   },
   {
     path: 'books/publisher/:publisherId',
     loadComponent: () =>
-      import('./features/books/components/book-list/book-list.component').then(
-        (m) => m.BookListComponent
-      ),
+      import(
+        './client/features/books/components/book-list/book-list.component'
+      ).then((m) => m.BookListComponent),
   },
   { path: '**', redirectTo: '' },
 ];

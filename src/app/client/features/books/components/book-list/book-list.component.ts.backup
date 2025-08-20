@@ -1,0 +1,198 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  Book,
+  PagedResponse,
+  SearchBookQuery,
+} from '../../../../../core/models/book.model';
+import { BookService } from '../../../../../core/services/book.service';
+import { BookCardComponent } from '../book-card/book-card.component';
+import { ActivatedRoute, Router } from '@angular/router';
+import { CategoryService } from '../../../../../core/services/category.service';
+import { FormsModule } from '@angular/forms';
+import { Category } from '../../../../../core/models/category.model';
+import { Subject, takeUntil } from 'rxjs';
+import { PublisherService } from '../../../../../core/services/publisher.service';
+import { Publisher } from '../../../../../core/models/publisher.model';
+
+@Component({
+  selector: 'app-book-list',
+  standalone: true,
+  imports: [CommonModule, BookCardComponent, FormsModule],
+  templateUrl: './book-list.component.html',
+  styleUrls: ['./book-list.component.scss'],
+})
+export class BookListComponent implements OnInit {
+  loading = false;
+  error: string | null = null;
+
+  books: Book[] = [];
+  pageNumber = 1;
+  pageSize = 12;
+  totalCount = 0;
+  currentCategoryId: number | null = null;
+  categories: Category[] = [];
+  publishers: Publisher[] = [];
+  currentSearchTerm: string = '';
+  pagedResponse: PagedResponse<Book> | null = null;
+  destroy$: Subject<void> = new Subject<void>();
+  currentPublisherId: number | null = null;
+
+  constructor(
+    private bookService: BookService,
+    private route: ActivatedRoute,
+    private categoryService: CategoryService,
+    private router: Router,
+    private publisherService: PublisherService
+  ) {}
+
+  ngOnInit(): void {
+    this.loadAllCategories();
+    this.loadAllPublishers();
+    this.handleRouteParams();
+    this.handleQueryParams();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  loadBooks(): void {
+    this.currentSearchTerm = '';
+    this.pageNumber = 1;
+    this.loadBooksWithSearch();
+  }
+
+  loadAllCategories(): void {
+    this.categoryService.getCategories().subscribe((data) => {
+      this.categories = data;
+    });
+  }
+
+  loadAllPublishers(): void {
+    this.publisherService.getPublishers().subscribe((data) => {
+      this.publishers = data;
+    });
+  }
+
+  onCategoryChange(categoryId: number): void {
+    if (categoryId) {
+      this.router.navigate(['/books/category', categoryId]);
+    } else {
+      this.router.navigate(['/books']);
+    }
+  }
+
+  onPublisherChange(publisherId: number): void {
+    if (publisherId) {
+      this.router.navigate(['/books/publisher', publisherId]);
+    } else {
+      this.router.navigate(['/books']);
+    }
+  }
+
+  onPageChange(page: number): void {
+    if (page < 1) return;
+    this.pageNumber = page;
+    this.loadBooksWithSearch();
+  }
+
+  loadBooksByCategory(categoryId: number): void {
+    this.currentCategoryId = categoryId;
+    this.currentSearchTerm = '';
+    this.pageNumber = 1;
+    this.loadBooksWithSearch();
+  }
+
+  loadBooksByPublisher(publisherId: number): void {
+    this.currentPublisherId = publisherId;
+    this.currentSearchTerm = '';
+    this.pageNumber = 1;
+    this.loadBooksWithSearch();
+  }
+
+  private handleRouteParams() {
+    this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params) => {
+      const categoryId = params.get('categoryId');
+      const publisherId = params.get('publisherId');
+
+      // Reset current filters first
+      this.currentCategoryId = null;
+      this.currentPublisherId = null;
+
+      if (categoryId) {
+        this.currentCategoryId = +categoryId;
+        this.currentSearchTerm = '';
+        this.pageNumber = 1;
+        this.loadBooksWithSearch();
+      } else if (publisherId) {
+        this.currentPublisherId = +publisherId;
+        this.currentSearchTerm = '';
+        this.pageNumber = 1;
+        this.loadBooksWithSearch();
+      } else {
+        // Normal books page without filters
+        this.currentSearchTerm = '';
+        this.pageNumber = 1;
+        this.loadBooksWithSearch();
+      }
+    });
+  }
+
+  private handleQueryParams() {
+    this.route.queryParams
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((params) => {
+        const searchTerm = params['search'] || '';
+        if (!this.currentCategoryId && !this.currentPublisherId) {
+          this.currentSearchTerm = searchTerm.trim();
+          this.pageNumber = 1;
+          this.loadBooksWithSearch();
+        }
+      });
+  }
+
+  private loadBooksWithSearch() {
+    this.loading = true;
+    this.error = null;
+
+    const query: SearchBookQuery = {
+      searchTerm: this.currentSearchTerm || undefined,
+      categoryId: this.currentCategoryId || undefined,
+      publisherId: this.currentPublisherId || undefined,
+      pageNumber: this.pageNumber || 1,
+      pageSize: this.pageSize || 12,
+    };
+
+    this.bookService
+      .searchBooks(query)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.pagedResponse = response;
+          this.books = response.items;
+          this.totalCount = response.totalCount;
+          this.loading = false;
+        },
+        error: (err) => {
+          this.error = err?.message ?? 'Kitaplar yüklenemedi';
+          this.loading = false;
+          this.books = [];
+          this.pagedResponse = null;
+        },
+      });
+  }
+
+  get hasNextPage(): boolean {
+    return this.pagedResponse
+      ? this.pagedResponse.hasNextPage
+      : this.books.length >= this.pageSize;
+  }
+
+  get hasPreviousPage(): boolean {
+    return this.pagedResponse
+      ? this.pagedResponse.hasPreviousPage
+      : this.pageNumber > 1;
+  }
+}

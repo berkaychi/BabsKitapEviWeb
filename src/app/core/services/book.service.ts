@@ -40,7 +40,10 @@ export class BookService {
     });
   }
 
-  getBooksByPublisher(publisherId: number, query: BookQuery): Observable<Book[]>{
+  getBooksByPublisher(
+    publisherId: number,
+    query: BookQuery
+  ): Observable<Book[]> {
     const params = new HttpParams()
       .set('publisherId', publisherId)
       .set('pageNumber', query.pageNumber)
@@ -107,5 +110,43 @@ export class BookService {
       { value: SortDirection.ASC, label: 'Artan' },
       { value: SortDirection.DESC, label: 'Azalan' },
     ];
+  }
+
+  getAllBooksForAdmin(params: AdminBookQuery): Observable<PagedResponse<Book>> {
+    return this.http.get<PagedResponse<Book>>(`${this.apiUrl}/admin/books`, {
+      params,
+    });
+  }
+
+  createBook(book: CreateBookRequest): Observable<Book> {
+    return this.http.post<Book>(`${this.apiUrl}/admin/books`, book);
+  }
+
+  updateBook(id: number, book: UpdateBookRequest): Observable<Book> {
+    return this.http.put<Book>(`${this.apiUrl}/admin/books/${id}`, book);
+  }
+
+  deleteBook(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/admin/books/${id}`);
+  }
+
+  bulkUpdateStock(updates: StockUpdate[]): Observable<void> {
+    return this.http.patch<void>(
+      `${this.apiUrl}/admin/books/bulk-stock`,
+      updates
+    );
+  }
+
+  uploadBookImage(bookId: number, file: File): Observable<string> {
+    const formData = new FormData();
+    formData.append('image', file);
+    return this.http.post<string>(
+      `${this.apiUrl}/admin/books/${bookId}/image`,
+      formData
+    );
+  }
+
+  getLowStockBooks(): Observable<Book[]> {
+    return this.http.get<Book[]>(`${this.apiUrl}/admin/books/low-stock`);
   }
 }

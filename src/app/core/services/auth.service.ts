@@ -156,4 +156,18 @@ export class AuthService {
         })
       );
   }
+
+  isAdmin(): boolean {
+    const user = this.getCurrentUser();
+    return !!(user && (user.role === 'admin' || user.role === 'Admin'));
+  }
+
+  canAccessAdmin(): boolean {
+    return this.isLoggedIn() && this.isAdmin();
+  }
+
+  hasRole(role: string): boolean {
+    const user = this.getCurrentUser();
+    return !!(user && user.role.toLowerCase() === role.toLowerCase());
+  }
 }
