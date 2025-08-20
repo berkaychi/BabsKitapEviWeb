@@ -24,13 +24,7 @@
     <!-- Kullanıcı Menüsü -->
     <div class="user-menu" ngbDropdown>
       <button class="btn btn-link user-dropdown" ngbDropdownToggle>
-        <img
-          src="assets/images/default-avatar.png"
-          alt="Avatar"
-          class="user-avatar"
-        />
-        <span>{{ getUserDisplayName() }}</span>
-        <i class="bi bi-chevron-down"></i>
+        <span class="user-name">{{ getUserDisplayName() }}</span>
       </button>
 
       <div ngbDropdownMenu>

@@ -1,14 +1,15 @@
 <div class="admin-layout">
-  <app-admin-header (toggleSidebar)="toggleSidebar()"></app-admin-header>
-
   <div class="admin-layout__body">
     <app-admin-sidebar
       [collapsed]="sidebarCollapsed"
       (toggleCollapse)="toggleSidebar()"
     ></app-admin-sidebar>
 
-    <main class="admin-layout__content" [class.expanded]="sidebarCollapsed">
-      <router-outlet></router-outlet>
-    </main>
+    <div class="admin-layout__content" [class.expanded]="sidebarCollapsed">
+      <app-admin-header (toggleSidebar)="toggleSidebar()"></app-admin-header>
+      <main>
+        <router-outlet></router-outlet>
+      </main>
+    </div>
   </div>
 </div>

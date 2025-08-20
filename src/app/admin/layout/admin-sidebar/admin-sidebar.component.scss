@@ -15,7 +15,7 @@
   left: 0;
   top: 0;
   transition: width 0.3s ease;
-  z-index: 1000;
+  z-index: 1050; /* under header (1100), above content */
 
   &.collapsed {
     width: var(--admin-sidebar-collapsed-width);
@@ -59,8 +59,9 @@
           }
 
           &.active {
-            background: var(--admin-primary);
-            color: white;
+            background: #334155;
+            color: #fff;
+            box-shadow: inset 3px 0 0 0 var(--admin-primary);
           }
 
           i {
@@ -80,6 +81,11 @@
       span {
         display: none;
       }
+    }
+
+    /* Tooltip-like expand on hover for collapsed state */
+    .nav-item:hover .nav-link {
+      position: relative;
     }
   }
 }

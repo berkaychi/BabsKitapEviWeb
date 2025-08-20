@@ -18,8 +18,6 @@ export const adminGuard: CanActivateFn = (route, state) => {
     return true;
   }
 
-  router.navigate(['/'], {
-    queryParams: { error: 'admin-required' },
-  });
+  router.navigate(['/'], {});
   return false;
 };
