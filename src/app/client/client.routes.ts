@@ -75,15 +75,15 @@ export const clientRoutes: Routes = [
         canActivate: [authGuard],
         loadComponent: () =>
           import('../client/features/profile/profile.component').then(
-            (m) => m.ProfileComponents
+            (m) => m.ProfileComponent
           ),
       },
       {
         path: 'publishers',
         loadComponent: () =>
           import(
-            '../client/features/publishers/publisher-list/publisher-list.component'
-          ).then((m) => m.PublisherListComponent),
+            '../client/features/books/components/publishers/publishers.component'
+          ).then((m) => m.PublishersComponent),
       },
     ],
   },
