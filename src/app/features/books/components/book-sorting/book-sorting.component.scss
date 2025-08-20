@@ -1,0 +1,39 @@
+// Sorting controls styling
+.d-flex {
+  align-items: center;
+}
+
+.form-select {
+  border: 1px solid #ced4da;
+  
+  &:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+  
+  &.form-select-sm {
+    min-width: 120px;
+    font-size: 0.875rem;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 767.98px) {
+  .d-flex {
+    flex-direction: column;
+    gap: 0.5rem !important;
+    align-items: stretch;
+  }
+  
+  .form-select {
+    width: 100% !important;
+    min-width: auto;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .form-select.form-select-sm {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
+  }
+}

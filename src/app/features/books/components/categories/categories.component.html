@@ -1,0 +1,53 @@
+<div class="categories-container">
+  <div class="categories-header">
+    <h2>Kategoriler</h2>
+    <p class="categories-subtitle">İlgi alanınıza göre kategorileri keşfedin</p>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Kategoriler yükleniyor...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="error-container">
+    <div class="error-icon">⚠️</div>
+    <p class="error-message">{{ error }}</p>
+    <button class="retry-button" (click)="loadCategories()">Tekrar Dene</button>
+  </div>
+
+  <!-- Categories Grid -->
+  <div
+    *ngIf="!isLoading && !error && categories.length > 0"
+    class="categories-grid"
+  >
+    <a
+      *ngFor="let category of categories; trackBy: trackByCategoryId"
+      [routerLink]="['/books/category', category.id]"
+      class="category-card"
+    >
+      <div class="category-content">
+        <div class="category-icon">
+          <span>📚</span>
+        </div>
+        <div class="category-info">
+          <h3 class="category-name">{{ category.name }}</h3>
+        </div>
+        <div class="category-arrow">
+          <i class="bi bi-arrow-right"></i>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <!-- Empty State -->
+  <div
+    *ngIf="!isLoading && !error && categories.length === 0"
+    class="empty-state"
+  >
+    <div class="empty-icon">📂</div>
+    <h3>Henüz kategori bulunamadı</h3>
+    <p>Şu anda sistemde kayıtlı kategori bulunmamaktadır.</p>
+  </div>
+</div>

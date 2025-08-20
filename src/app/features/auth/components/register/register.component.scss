@@ -1,0 +1,64 @@
+.register-container {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+.card {
+  border-radius: 1rem;
+  backdrop-filter: blur(10px);
+}
+
+.input-group {
+  .input-group-text {
+    background-color: #f8f9fa;
+    border-right: none;
+
+    i {
+      color: #6c757d;
+    }
+  }
+
+  .form-control {
+    border-left: none;
+
+    &:focus {
+      border-color: #ced4da;
+      box-shadow: none;
+    }
+  }
+}
+
+.btn-primary {
+  background: linear-gradient(45deg, #007bff, #0056b3);
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+  }
+
+  &:disabled {
+    transform: none;
+    box-shadow: none;
+    opacity: 0.6;
+  }
+}
+
+.form-check-input.is-invalid {
+  border-color: #dc3545;
+}
+
+@media (max-width: 768px) {
+  .card-body {
+    padding: 2rem !important;
+  }
+
+  .register-container {
+    padding: 1rem;
+  }
+}

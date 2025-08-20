@@ -1,0 +1,71 @@
+// Pagination styling
+.pagination-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pagination {
+  .page-link {
+    color: #495057;
+    border: 1px solid #dee2e6;
+    padding: 0.5rem 0.75rem;
+    
+    &:hover {
+      color: #0056b3;
+      background-color: #e9ecef;
+      border-color: #dee2e6;
+    }
+    
+    &:focus {
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+  }
+  
+  .page-item {
+    &.active .page-link {
+      background-color: #007bff;
+      border-color: #007bff;
+      color: white;
+    }
+    
+    &.disabled .page-link {
+      color: #6c757d;
+      background-color: white;
+      border-color: #dee2e6;
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+}
+
+.page-info {
+  margin-top: 0.5rem;
+  
+  small {
+    font-size: 0.875rem;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 575.98px) {
+  .pagination {
+    .page-link {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+    }
+  }
+  
+  .page-info small {
+    font-size: 0.8rem;
+  }
+}
+
+// Hide some page numbers on very small screens
+@media (max-width: 400px) {
+  .pagination {
+    .page-item:not(.active):not(:first-child):not(:last-child):not(:nth-child(2)):not(:nth-last-child(2)) {
+      display: none;
+    }
+  }
+}

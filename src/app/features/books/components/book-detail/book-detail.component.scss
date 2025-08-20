@@ -1,0 +1,23 @@
+.book-detail-page {
+  .card {
+    overflow: hidden;
+  }
+  img.card-img-top {
+    object-fit: cover;
+    width: 100%;
+  }
+  h2 {
+    font-weight: 600;
+  }
+  .badge {
+    font-weight: 500;
+  }
+
+  .book-detail-image {
+    width: 100%; /* İçinde bulunduğu konteynerin (col-md-4) genişliğini doldurur. */
+    height: auto; /* Yüksekliği, en-boy oranını koruyacak şekilde otomatik ayarlar. */
+    max-width: 400px; /* Görselin gereğinden fazla büyümesini engellemek için bir üst limit (isteğe bağlı ama önerilir). */
+    margin: 0 auto; /* Görseli yatayda ortalamak için (eğer konteyneri daha genişse). */
+    display: block;
+  }
+}

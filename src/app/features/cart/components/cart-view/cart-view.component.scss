@@ -1,0 +1,30 @@
+.cart-page {
+  background: transparent;
+}
+
+.card {
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  border-radius: 16px;
+}
+
+.table > :not(caption) > * > * {
+  background-color: transparent;
+}
+
+.table thead th {
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+  color: #334155;
+}
+
+.btn-outline-secondary { border-color: rgba(15,23,42,.2); color: #334155; }
+.btn-outline-secondary:hover { background: rgba(15,23,42,.06); }
+
+.btn-outline-danger { border-color: rgba(220,38,38,.4); }
+.btn-outline-danger:hover { background: rgba(220,38,38,.08); }
+
+.cart-item-thumb {
+  object-fit: cover;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+}
+

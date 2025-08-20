@@ -1,0 +1,117 @@
+<div class="card p-3 sticky-top" style="top: 88px">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h6 class="mb-0 text-uppercase text-muted">Filtrele</h6>
+    <button
+      class="btn btn-sm btn-outline-secondary"
+      (click)="clearFilters()"
+      [disabled]="!hasActiveFilters"
+      title="Filtreleri Temizle"
+    >
+      <i class="bi bi-x-circle"></i>
+    </button>
+  </div>
+
+  <!-- Kategori Filtresi -->
+  <div class="mb-3" *ngIf="filterOptions?.categories">
+    <label class="form-label fw-semibold">Kategori</label>
+    <select
+      class="form-select"
+      [ngModel]="filterState?.categoryId"
+      (ngModelChange)="onCategoryChange($event)"
+    >
+      <option [ngValue]="null">Tüm Kitaplar</option>
+      <option
+        *ngFor="let category of filterOptions?.categories"
+        [value]="category.id"
+      >
+        {{ category.name }}
+      </option>
+    </select>
+  </div>
+
+  <!-- Yayın Evi Filtresi -->
+  <div class="mb-3" *ngIf="filterOptions?.publishers">
+    <label class="form-label fw-semibold">Yayın Evi</label>
+    <select
+      class="form-select"
+      [ngModel]="filterState?.publisherId"
+      (ngModelChange)="onPublisherChange($event)"
+    >
+      <option [ngValue]="null">Tüm Yayın Evleri</option>
+      <option
+        *ngFor="let publisher of filterOptions?.publishers"
+        [value]="publisher.id"
+      >
+        {{ publisher.name }}
+      </option>
+    </select>
+  </div>
+
+  <!-- Fiyat Aralığı Filtresi -->
+  <div class="mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <label class="form-label fw-semibold mb-0">Fiyat Aralığı</label>
+      <button
+        class="btn btn-sm btn-outline-secondary"
+        (click)="clearPriceFilter()"
+        title="Fiyat Filtresini Temizle"
+        *ngIf="filterState?.minPrice || filterState?.maxPrice"
+      >
+        <i class="bi bi-x"></i>
+      </button>
+    </div>
+    <div class="row g-2">
+      <div class="col-6">
+        <input
+          type="number"
+          class="form-control form-control-sm"
+          placeholder="Min ₺"
+          [value]="filterState?.minPrice || ''"
+          (input)="onMinPriceChange($any($event.target).value)"
+          min="0"
+          step="1"
+        />
+      </div>
+      <div class="col-6">
+        <input
+          type="number"
+          class="form-control form-control-sm"
+          placeholder="Max ₺"
+          [value]="filterState?.maxPrice || ''"
+          (input)="onMaxPriceChange($any($event.target).value)"
+          min="0"
+          step="1"
+        />
+      </div>
+    </div>
+    <small
+      class="text-muted"
+      *ngIf="filterState?.minPrice || filterState?.maxPrice"
+    >
+      {{ filterState?.minPrice || 0 }}₺ - {{ filterState?.maxPrice || "∞" }}₺
+    </small>
+  </div>
+
+  <!-- Aktif Filtreler Özeti -->
+  <div class="mb-3" *ngIf="hasActiveFilters">
+    <label class="form-label fw-semibold">Aktif Filtreler</label>
+    <div class="d-flex flex-wrap gap-1">
+      <span class="badge bg-primary" *ngIf="filterState?.searchTerm">
+        Arama: {{ filterState?.searchTerm }}
+      </span>
+      <span class="badge bg-info" *ngIf="filterState?.categoryId">
+        Kategori: {{ selectedCategoryName }}
+      </span>
+      <span class="badge bg-warning" *ngIf="filterState?.publisherId">
+        Yayınevi: {{ selectedPublisherName }}
+      </span>
+      <span
+        class="badge bg-success"
+        *ngIf="filterState?.minPrice || filterState?.maxPrice"
+      >
+        Fiyat: {{ filterState?.minPrice || 0 }}₺ -
+        {{ filterState?.maxPrice || "∞" }}₺
+      </span>
+    </div>
+  </div>
+</div>

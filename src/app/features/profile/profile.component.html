@@ -1,0 +1,353 @@
+<div class="profile-container">
+  <div class="profile-header">
+    <h1>Profil Ayarları</h1>
+    <p class="text-muted">Hesap bilgilerinizi ve adreslerinizi yönetin</p>
+  </div>
+
+  <!-- Loading Spinner (overlay olmadan, formun görünmesini engellemesin) -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Yükleniyor...</p>
+  </div>
+
+  <!-- Error Alert -->
+  <div *ngIf="error" class="alert alert-error">
+    <i class="icon-error"></i>
+    {{ error }}
+    <button type="button" class="close" (click)="error = null">&times;</button>
+  </div>
+
+  <!-- Success Alert -->
+  <div *ngIf="successMessage" class="alert alert-success">
+    <i class="icon-success"></i>
+    {{ successMessage }}
+    <button type="button" class="close" (click)="successMessage = null">
+      &times;
+    </button>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="tab-navigation">
+    <button
+      class="tab-button"
+      [class.active]="activeTab === 'profile'"
+      (click)="setActiveTab('profile')"
+    >
+      <i class="icon-user"></i>
+      Profil Bilgileri
+    </button>
+    <button
+      class="tab-button"
+      [class.active]="activeTab === 'password'"
+      (click)="setActiveTab('password')"
+    >
+      <i class="icon-lock"></i>
+      Şifre Değiştir
+    </button>
+    <button
+      class="tab-button"
+      [class.active]="activeTab === 'addresses'"
+      (click)="setActiveTab('addresses')"
+    >
+      <i class="icon-location"></i>
+      Adreslerim
+    </button>
+  </div>
+
+  <!-- Content Area -->
+  <div class="tab-content">
+    <!-- Profile Information Tab -->
+    <div [hidden]="activeTab !== 'profile'" class="tab-section">
+      <div class="profile-info-section">
+        <h2>Kişisel Bilgiler</h2>
+
+        <form
+          [formGroup]="profileForm"
+          (ngSubmit)="updateProfile()"
+          class="profile-form"
+        >
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstName">Ad *</label>
+              <input
+                type="text"
+                id="firstName"
+                formControlName="firstName"
+                class="form-control"
+                [class.error]="getFieldError(profileForm, 'firstName')"
+                placeholder="Adınızı giriniz"
+              />
+              <div
+                *ngIf="getFieldError(profileForm, 'firstName')"
+                class="error-message"
+              >
+                {{ getFieldError(profileForm, "firstName") }}
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="lastName">Soyad *</label>
+              <input
+                type="text"
+                id="lastName"
+                formControlName="lastName"
+                class="form-control"
+                [class.error]="getFieldError(profileForm, 'lastName')"
+                placeholder="Soyadınızı giriniz"
+              />
+              <div
+                *ngIf="getFieldError(profileForm, 'lastName')"
+                class="error-message"
+              >
+                {{ getFieldError(profileForm, "lastName") }}
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">E-posta *</label>
+            <input
+              type="email"
+              id="email"
+              formControlName="email"
+              class="form-control"
+              [class.error]="getFieldError(profileForm, 'email')"
+              placeholder="E-posta adresinizi giriniz"
+            />
+            <div
+              *ngIf="getFieldError(profileForm, 'email')"
+              class="error-message"
+            >
+              {{ getFieldError(profileForm, "email") }}
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="loading || profileForm.invalid"
+            >
+              <i class="icon-save"></i>
+              Profili Güncelle
+            </button>
+          </div>
+        </form>
+
+        <!-- Account Information -->
+        <div class="account-info">
+          <h3>Hesap Bilgileri</h3>
+          <div class="info-item">
+            <label>Hesap Oluşturma Tarihi:</label>
+            <span>{{ formatDate(me?.createdAt) }}</span>
+          </div>
+          <div class="info-item">
+            <label>Kullanıcı Rolü:</label>
+            <span class="role-badge">{{ me?.role }}</span>
+          </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="danger-zone">
+          <h3>Tehlikeli Bölge</h3>
+          <p class="warning-text">Bu işlemler geri alınamaz. Dikkatli olun.</p>
+          <button
+            type="button"
+            class="btn btn-danger"
+            (click)="deleteAccount()"
+          >
+            <i class="icon-trash"></i>
+            Hesabı Sil
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Password Change Tab -->
+    <div [hidden]="activeTab !== 'password'" class="tab-section">
+      <div class="password-section">
+        <h2>Şifre Değiştir</h2>
+        <p class="section-description">
+          Güvenliğiniz için güçlü bir şifre seçin.
+        </p>
+
+        <form
+          [formGroup]="passwordForm"
+          (ngSubmit)="changePassword()"
+          class="password-form"
+        >
+          <div class="form-group">
+            <label for="oldPassword">Mevcut Şifre *</label>
+            <input
+              type="password"
+              id="oldPassword"
+              formControlName="oldPassword"
+              class="form-control"
+              [class.error]="getFieldError(passwordForm, 'oldPassword')"
+              placeholder="Mevcut şifrenizi giriniz"
+            />
+            <div
+              *ngIf="getFieldError(passwordForm, 'oldPassword')"
+              class="error-message"
+            >
+              {{ getFieldError(passwordForm, "oldPassword") }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="newPassword">Yeni Şifre *</label>
+            <input
+              type="password"
+              id="newPassword"
+              formControlName="newPassword"
+              class="form-control"
+              [class.error]="getFieldError(passwordForm, 'newPassword')"
+              placeholder="Yeni şifrenizi giriniz"
+            />
+            <div
+              *ngIf="getFieldError(passwordForm, 'newPassword')"
+              class="error-message"
+            >
+              {{ getFieldError(passwordForm, "newPassword") }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">Yeni Şifre Tekrar *</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              formControlName="confirmPassword"
+              class="form-control"
+              [class.error]="getFieldError(passwordForm, 'confirmPassword')"
+              placeholder="Yeni şifrenizi tekrar giriniz"
+            />
+            <div
+              *ngIf="getFieldError(passwordForm, 'confirmPassword')"
+              class="error-message"
+            >
+              {{ getFieldError(passwordForm, "confirmPassword") }}
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="loading || passwordForm.invalid"
+            >
+              <i class="icon-lock"></i>
+              Şifreyi Değiştir
+            </button>
+          </div>
+        </form>
+
+        <!-- Password Requirements -->
+        <div class="password-requirements">
+          <h4>Şifre Gereksinimleri:</h4>
+          <ul>
+            <li>En az 6 karakter uzunluğunda olmalıdır</li>
+            <li>Büyük ve küçük harf içermelidir</li>
+            <li>En az bir rakam içermelidir</li>
+            <li>Özel karakter kullanmanız önerilir</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Addresses Tab -->
+    <div [hidden]="activeTab !== 'addresses'" class="tab-section">
+      <div class="addresses-section">
+        <div class="addresses-header">
+          <h2>Adres Defterim</h2>
+          <button
+            type="button"
+            class="btn btn-primary"
+            routerLink="/profile/addresses/new"
+          >
+            <i class="icon-plus"></i>
+            Yeni Adres Ekle
+          </button>
+        </div>
+
+        <div *ngIf="addresses.length === 0" class="empty-addresses">
+          <div class="empty-icon">
+            <i class="icon-location-empty"></i>
+          </div>
+          <h3>Henüz adres eklememişsiniz</h3>
+          <p>Hızlı teslimat için adres bilgilerinizi ekleyin</p>
+          <button
+            type="button"
+            class="btn btn-primary"
+            routerLink="/profile/addresses/new"
+          >
+            İlk Adresimi Ekle
+          </button>
+        </div>
+
+        <div *ngIf="addresses.length > 0" class="addresses-grid">
+          <div
+            *ngFor="let address of addresses"
+            class="address-card"
+            [class.default]="address.isDefault"
+          >
+            <div class="address-header">
+              <h4>{{ address.addressName }}</h4>
+              <div class="address-badges">
+                <span *ngIf="address.isDefault" class="badge badge-primary"
+                  >Varsayılan</span
+                >
+              </div>
+            </div>
+
+            <div class="address-content">
+              <div class="address-line">
+                <strong>{{ address.fullName }}</strong>
+              </div>
+              <div class="address-line">
+                {{ address.streetAddress }}
+              </div>
+              <div class="address-line">
+                {{ address.city }}, {{ address.country }} {{ address.zipCode }}
+              </div>
+              <div class="address-line">
+                <i class="icon-phone"></i>
+                {{ address.phoneNumber }}
+              </div>
+            </div>
+
+            <div class="address-actions">
+              <button
+                type="button"
+                class="btn btn-sm btn-outline"
+                [routerLink]="['/profile/addresses', address.id, 'edit']"
+              >
+                <i class="icon-edit"></i>
+                Düzenle
+              </button>
+
+              <button
+                *ngIf="!address.isDefault"
+                type="button"
+                class="btn btn-sm btn-outline"
+                (click)="setDefaultAddress(address.id)"
+              >
+                <i class="icon-star"></i>
+                Varsayılan Yap
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-sm btn-danger"
+                (click)="deleteAddress(address.id)"
+              >
+                <i class="icon-trash"></i>
+                Sil
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

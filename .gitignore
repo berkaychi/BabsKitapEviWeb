@@ -40,3 +40,10 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+/plan
+
+# Environment files (uncomment to protect sensitive data)
+# src/environments/environment.ts
+# src/environments/environment.prod.ts
+# Note: Keep environment.example.ts in git for reference

@@ -1,0 +1,61 @@
+// Filtre sidebar'ı için stiller
+.card {
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form-label.fw-semibold {
+  color: #495057;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.form-select, .form-control {
+  border: 1px solid #ced4da;
+  
+  &:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+}
+
+// Price range inputs
+.row.g-2 .col-6 input {
+  font-size: 0.875rem;
+}
+
+// Active filters badges
+.badge {
+  font-size: 0.75rem;
+  padding: 0.35em 0.65em;
+}
+
+// Clear filter buttons
+.btn-outline-secondary {
+  border-color: #6c757d;
+  color: #6c757d;
+  
+  &:hover {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// Icon styling
+.bi {
+  font-size: 0.875rem;
+}
+
+// Responsive adjustments
+@media (max-width: 991.98px) {
+  .sticky-top {
+    position: relative !important;
+    top: auto !important;
+  }
+}

@@ -1,0 +1,70 @@
+<nav class="d-flex justify-content-center mt-4" aria-label="Sayfalama" *ngIf="pagedResponse && totalPages > 1">
+  <div class="pagination-wrapper">
+    <ul class="pagination mb-0">
+      <!-- İlk sayfa -->
+      <li class="page-item" [class.disabled]="currentPage === 1" *ngIf="showFirstLastButtons">
+        <button
+          class="page-link"
+          (click)="onPageChange(1)"
+          [disabled]="currentPage === 1"
+          aria-label="İlk Sayfa">
+          ««
+        </button>
+      </li>
+
+      <!-- Önceki sayfa -->
+      <li class="page-item" [class.disabled]="!hasPreviousPage">
+        <button
+          class="page-link"
+          (click)="onPageChange(currentPage - 1)"
+          [disabled]="!hasPreviousPage"
+          aria-label="Önceki">
+          ‹
+        </button>
+      </li>
+
+      <!-- Sayfa numaraları -->
+      <li 
+        class="page-item" 
+        [class.active]="page === currentPage"
+        *ngFor="let page of pageNumbers">
+        <button
+          class="page-link"
+          (click)="onPageChange(page)"
+          [disabled]="page === currentPage">
+          {{ page }}
+        </button>
+      </li>
+
+      <!-- Sonraki sayfa -->
+      <li class="page-item" [class.disabled]="!hasNextPage">
+        <button
+          class="page-link"
+          (click)="onPageChange(currentPage + 1)"
+          [disabled]="!hasNextPage"
+          aria-label="Sonraki">
+          ›
+        </button>
+      </li>
+
+      <!-- Son sayfa -->
+      <li class="page-item" [class.disabled]="currentPage === totalPages" *ngIf="showFirstLastButtons">
+        <button
+          class="page-link"
+          (click)="onPageChange(totalPages)"
+          [disabled]="currentPage === totalPages"
+          aria-label="Son Sayfa">
+          »»
+        </button>
+      </li>
+    </ul>
+
+    <!-- Sayfa bilgisi -->
+    <div class="page-info mt-2 text-center">
+      <small class="text-muted">
+        Sayfa {{ currentPage }} / {{ totalPages }} 
+        ({{ pagedResponse.totalCount }} ürün)
+      </small>
+    </div>
+  </div>
+</nav>

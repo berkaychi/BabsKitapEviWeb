@@ -1,0 +1,99 @@
+<div class="address-list-container">
+  <div class="address-list-header">
+    <h2>Adres Defterim</h2>
+    <button 
+      type="button" 
+      class="btn btn-primary"
+      routerLink="/profile/addresses/new">
+      <i class="icon-plus"></i>
+      Yeni Adres Ekle
+    </button>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Adresler yükleniyor...</p>
+  </div>
+
+  <!-- Error Alert -->
+  <div *ngIf="error" class="alert alert-error">
+    <i class="icon-error"></i>
+    {{ error }}
+    <button type="button" class="close" (click)="error = null">&times;</button>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && addresses.length === 0" class="empty-addresses">
+    <div class="empty-icon">
+      <i class="icon-location-empty"></i>
+    </div>
+    <h3>Henüz adres eklememişsiniz</h3>
+    <p>Hızlı teslimat için adres bilgilerinizi ekleyin</p>
+    <button 
+      type="button" 
+      class="btn btn-primary"
+      routerLink="/profile/addresses/new">
+      İlk Adresimi Ekle
+    </button>
+  </div>
+
+  <!-- Address Grid -->
+  <div *ngIf="!loading && addresses.length > 0" class="addresses-grid">
+    <div 
+      *ngFor="let address of addresses" 
+      class="address-card"
+      [class.default]="address.isDefault">
+      
+      <div class="address-header">
+        <h4>{{ address.addressName }}</h4>
+        <div class="address-badges">
+          <span *ngIf="address.isDefault" class="badge badge-primary">Varsayılan</span>
+        </div>
+      </div>
+
+      <div class="address-content">
+        <div class="address-line">
+          <strong>{{ address.fullName }}</strong>
+        </div>
+        <div class="address-line">
+          {{ address.streetAddress }}
+        </div>
+        <div class="address-line">
+          {{ address.city }}, {{ address.country }} {{ address.zipCode }}
+        </div>
+        <div class="address-line">
+          <i class="icon-phone"></i>
+          {{ address.phoneNumber }}
+        </div>
+      </div>
+
+      <div class="address-actions">
+        <button 
+          type="button" 
+          class="btn btn-sm btn-outline"
+          [routerLink]="['/profile/addresses', address.id, 'edit']">
+          <i class="icon-edit"></i>
+          Düzenle
+        </button>
+        
+        <button 
+          *ngIf="!address.isDefault"
+          type="button" 
+          class="btn btn-sm btn-outline"
+          (click)="setDefaultAddress(address.id)">
+          <i class="icon-star"></i>
+          Varsayılan Yap
+        </button>
+        
+        <button 
+          type="button" 
+          class="btn btn-sm btn-danger"
+          (click)="deleteAddress(address.id)">
+          <i class="icon-trash"></i>
+          Sil
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

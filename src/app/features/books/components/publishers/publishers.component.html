@@ -1,0 +1,57 @@
+<div class="publishers-container">
+  <div class="publishers-header">
+    <h2>Yayınevleri</h2>
+    <p class="publishers-subtitle">Tüm yayınevlerini keşfedin</p>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Yayınevleri yükleniyor...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="error-container">
+    <div class="error-icon">⚠️</div>
+    <p class="error-message">{{ error }}</p>
+    <button class="retry-button" (click)="loadPublishers()">Tekrar Dene</button>
+  </div>
+
+  <!-- Publishers Grid -->
+  <div
+    *ngIf="!isLoading && !error && publishers.length > 0"
+    class="publishers-grid"
+  >
+    <div
+      *ngFor="let publisher of publishers; trackBy: trackByPublisherId"
+      class="publisher-card"
+    >
+      <div class="publisher-content">
+        <div class="publisher-icon">
+          <span>📚</span>
+        </div>
+        <div class="publisher-info">
+          <h3 class="publisher-name">{{ publisher.name }}</h3>
+        </div>
+      </div>
+      <div class="publisher-actions">
+        <button
+          class="view-books-btn"
+          (click)="viewPublisherBooks(publisher.id)"
+        >
+          Kitapları Gör
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div
+    *ngIf="!isLoading && !error && publishers.length === 0"
+    class="empty-state"
+  >
+    <div class="empty-icon">📖</div>
+    <h3>Henüz yayınevi bulunamadı</h3>
+    <p>Şu anda sistemde kayıtlı yayınevi bulunmamaktadır.</p>
+  </div>
+</div>

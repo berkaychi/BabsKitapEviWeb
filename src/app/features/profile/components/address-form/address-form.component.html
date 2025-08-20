@@ -1,0 +1,173 @@
+<div class="address-form-container">
+  <div class="form-header">
+    <h1>{{ isEditMode ? 'Adres Düzenle' : 'Yeni Adres Ekle' }}</h1>
+    <p class="subtitle">Teslimat için adres bilgilerinizi girin</p>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>{{ isEditMode ? 'Adres yükleniyor...' : 'Adres kaydediliyor...' }}</p>
+  </div>
+
+  <!-- Error Alert -->
+  <div *ngIf="error" class="alert alert-error">
+    <i class="icon-error"></i>
+    {{ error }}
+    <button type="button" class="close" (click)="error = null">&times;</button>
+  </div>
+
+  <!-- Address Form -->
+  <form [formGroup]="addressForm" (ngSubmit)="onSubmit()" class="address-form">
+    <div class="form-section">
+      <h3>Adres Bilgileri</h3>
+      
+      <div class="form-group">
+        <label for="addressName">Adres Adı *</label>
+        <input 
+          type="text" 
+          id="addressName" 
+          formControlName="addressName"
+          class="form-control"
+          [class.error]="getFieldError('addressName')"
+          placeholder="Ev, İş, vs.">
+        <div *ngIf="getFieldError('addressName')" class="error-message">
+          {{ getFieldError('addressName') }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="fullName">Ad Soyad *</label>
+        <input 
+          type="text" 
+          id="fullName" 
+          formControlName="fullName"
+          class="form-control"
+          [class.error]="getFieldError('fullName')"
+          placeholder="Alıcının tam adı">
+        <div *ngIf="getFieldError('fullName')" class="error-message">
+          {{ getFieldError('fullName') }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="streetAddress">Adres *</label>
+        <textarea 
+          id="streetAddress" 
+          formControlName="streetAddress"
+          class="form-control"
+          [class.error]="getFieldError('streetAddress')"
+          rows="3"
+          placeholder="Mahalle, sokak, kapı no, kat, daire no">
+        </textarea>
+        <div *ngIf="getFieldError('streetAddress')" class="error-message">
+          {{ getFieldError('streetAddress') }}
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="city">Şehir *</label>
+          <input 
+            type="text" 
+            id="city" 
+            formControlName="city"
+            class="form-control"
+            [class.error]="getFieldError('city')"
+            placeholder="İstanbul">
+          <div *ngIf="getFieldError('city')" class="error-message">
+            {{ getFieldError('city') }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="country">Ülke *</label>
+          <select 
+            id="country" 
+            formControlName="country"
+            class="form-control"
+            [class.error]="getFieldError('country')">
+            <option value="Türkiye">Türkiye</option>
+          </select>
+          <div *ngIf="getFieldError('country')" class="error-message">
+            {{ getFieldError('country') }}
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="zipCode">Posta Kodu *</label>
+          <input 
+            type="text" 
+            id="zipCode" 
+            formControlName="zipCode"
+            class="form-control"
+            [class.error]="getFieldError('zipCode')"
+            placeholder="34000">
+          <div *ngIf="getFieldError('zipCode')" class="error-message">
+            {{ getFieldError('zipCode') }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="phoneNumber">Telefon *</label>
+          <input 
+            type="tel" 
+            id="phoneNumber" 
+            formControlName="phoneNumber"
+            class="form-control"
+            [class.error]="getFieldError('phoneNumber')"
+            placeholder="+90 555 123 4567">
+          <div *ngIf="getFieldError('phoneNumber')" class="error-message">
+            {{ getFieldError('phoneNumber') }}
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="checkbox-wrapper">
+          <input 
+            type="checkbox" 
+            id="isDefault" 
+            formControlName="isDefault"
+            class="form-checkbox">
+          <label for="isDefault" class="checkbox-label">
+            Bu adresi varsayılan adres olarak ayarla
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button 
+        type="button" 
+        class="btn btn-secondary"
+        routerLink="/profile"
+        [queryParams]="{tab: 'addresses'}">
+        <i class="icon-arrow-left"></i>
+        İptal
+      </button>
+      
+      <button 
+        type="submit" 
+        class="btn btn-primary"
+        [disabled]="loading || addressForm.invalid">
+        <i class="icon-save"></i>
+        {{ isEditMode ? 'Adresi Güncelle' : 'Adresi Kaydet' }}
+      </button>
+    </div>
+  </form>
+
+  <!-- Address Guidelines -->
+  <div class="address-guidelines">
+    <h4>Adres Bilgileri İpuçları:</h4>
+    <ul>
+      <li>Teslimat için doğru ve eksiksiz adres bilgilerini girin</li>
+      <li>Kapı, kat, daire no gibi detayları belirtmeyi unutmayın</li>
+      <li>Telefon numaranızın güncel olduğundan emin olun</li>
+      <li>İlk adresiniz otomatik olarak varsayılan adres olacaktır</li>
+    </ul>
+  </div>
+</div>

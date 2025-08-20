@@ -1,0 +1,201 @@
+<nav class="navbar navbar-expand-lg glass-navbar sticky-top">
+  <div class="container">
+    <!-- Brand with gradient text effect -->
+    <a class="navbar-brand fw-bold d-flex align-items-center" routerLink="/">
+      <i class="bi bi-book-fill me-2 animated-icon"></i>
+      <span class="brand-text">Bab's Kitap Evi</span>
+      <div class="brand-glow"></div>
+    </a>
+
+    <!-- Mobile menu toggle with animation -->
+    <button
+      aria-label="Menü aç/kapat"
+      class="navbar-toggler border-0 p-0"
+      type="button"
+      (click)="toggleMenu()"
+      [attr.aria-expanded]="!isMenuCollapsed"
+    >
+      <div class="hamburger-menu" [class.active]="!isMenuCollapsed">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </button>
+
+    <div
+      class="collapse navbar-collapse"
+      id="navbarNav"
+      [ngbCollapse]="isMenuCollapsed"
+    >
+      <!-- Search Bar -->
+      <form
+        class="d-flex align-items-center ms-lg-4 me-auto my-2 my-lg-0 search-form"
+        (ngSubmit)="onSearchSubmit()"
+      >
+        <div class="input-group rounded-pill shadow-sm overflow-hidden">
+          <span class="input-group-text bg-white border-0">
+            <i class="bi bi-search text-muted"></i>
+          </span>
+          <input
+            class="form-control border-0"
+            type="search"
+            placeholder="Kitap, yazar veya kategori ara..."
+            [(ngModel)]="searchQuery"
+            name="q"
+            (input)="onSearchInput($event)"
+          />
+          <button class="btn btn-primary d-none d-md-inline" type="submit">
+            Ara
+          </button>
+        </div>
+      </form>
+
+      <!-- Main Navigation -->
+      <ul class="navbar-nav ms-lg-3 mb-2 mb-lg-0" *ngIf="currentUser">
+        <li class="nav-item">
+          <a
+            class="nav-link rounded-pill"
+            routerLink="/books"
+            routerLinkActive="active"
+          >
+            <i class="bi bi-grid me-1 animated-icon"></i>
+            <span>Kitaplar</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link rounded-pill"
+            routerLink="/categories"
+            routerLinkActive="active"
+          >
+            <i class="bi bi-tags me-1 animated-icon"></i>
+            <span>Kategoriler</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link rounded-pill"
+            routerLink="/publishers"
+            routerLinkActive="active"
+          >
+            <i class="bi bi-building me-1 animated-icon"></i>
+            <span>Yayınevleri</span>
+          </a>
+        </li>
+      </ul>
+
+      <!-- User Actions -->
+      <ul class="navbar-nav align-items-center">
+        <!-- Guest User Links -->
+        <ng-container *ngIf="!currentUser">
+          <li class="nav-item me-2">
+            <a class="nav-link rounded-pill px-3" routerLink="/auth/login">
+              <i class="bi bi-box-arrow-in-right me-1"></i>
+              <span>Giriş Yap</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="btn btn-primary px-4 rounded-pill"
+              routerLink="/auth/register"
+            >
+              <i class="bi bi-person-plus me-1"></i>
+              <span>Kayıt Ol</span>
+            </a>
+          </li>
+        </ng-container>
+
+        <!-- Authenticated User Links -->
+        <ng-container *ngIf="currentUser">
+          <!-- Shopping Cart with floating badge -->
+          <li class="nav-item me-3">
+            <a
+              class="nav-link position-relative cart-link"
+              routerLink="/cart"
+              aria-label="Sepetim"
+            >
+              <div class="cart-icon-wrapper">
+                <i class="bi bi-cart3 fs-5"></i>
+              </div>
+              <span
+                class="badge position-absolute cart-badge"
+                *ngIf="cartItemCount > 0"
+                >{{ cartItemCount }}</span
+              >
+            </a>
+          </li>
+
+          <!-- User Profile Dropdown -->
+          <li class="nav-item dropdown" ngbDropdown>
+            <a
+              class="nav-link dropdown-toggle d-flex align-items-center user-profile-trigger"
+              role="button"
+              ngbDropdownToggle
+              id="userDropdown"
+            >
+              <div class="profile-avatar me-2">
+                <i class="bi bi-person-circle fs-4"></i>
+                <div class="avatar-glow"></div>
+              </div>
+              <span class="profile-name d-none d-md-inline">
+                {{ getUserDisplayName() }}
+              </span>
+            </a>
+
+            <!-- Modern Dropdown Menu -->
+            <ul
+              class="dropdown-menu dropdown-menu-end modern-dropdown"
+              ngbDropdownMenu
+            >
+              <li class="dropdown-header px-3 py-2">
+                <div class="d-flex align-items-center">
+                  <div class="profile-avatar-small me-2">
+                    <i class="bi bi-person-circle"></i>
+                  </div>
+                  <div>
+                    <div class="fw-semibold">{{ getUserDisplayName() }}</div>
+                    <small class="text-muted">{{ currentUser.email }}</small>
+                  </div>
+                </div>
+              </li>
+              <li><hr class="dropdown-divider my-2" /></li>
+
+              <li>
+                <a
+                  class="dropdown-item d-flex align-items-center"
+                  routerLink="/profile"
+                >
+                  <i class="bi bi-person me-3 text-primary"></i>
+                  <span>Profilim</span>
+                </a>
+              </li>
+
+              <li>
+                <a
+                  class="dropdown-item d-flex align-items-center"
+                  routerLink="/orders"
+                >
+                  <i class="bi bi-bag me-3 text-success"></i>
+                  <span>Siparişlerim</span>
+                </a>
+              </li>
+
+              <li><hr class="dropdown-divider my-2" /></li>
+
+              <li>
+                <a
+                  class="dropdown-item d-flex align-items-center text-danger logout-item"
+                  href="#"
+                  (click)="onLogout()"
+                >
+                  <i class="bi bi-box-arrow-right me-3"></i>
+                  <span>Çıkış Yap</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+        </ng-container>
+      </ul>
+    </div>
+  </div>
+</nav>

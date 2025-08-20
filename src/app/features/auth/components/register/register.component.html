@@ -1,0 +1,238 @@
+<div class="register-container">
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-6 col-md-8">
+        <div class="card shadow-sm border-0">
+          <div class="card-body p-5">
+            <!-- Header -->
+            <div class="text-center mb-4">
+              <i class="bi bi-person-plus-fill text-primary display-4 mb-3"></i>
+              <h2 class="card-title fw-bold">Hesap Oluşturun</h2>
+              <p class="text-muted">
+                Kitap alışverişine başlamak için kayıt olun
+              </p>
+            </div>
+
+            <!-- Error Alert -->
+            <div
+              class="alert alert-danger d-flex align-items-center"
+              *ngIf="errorMessage"
+              role="alert"
+            >
+              <i class="bi bi-exclamation-triangle-fill me-2"></i>
+              <div>{{ errorMessage }}</div>
+            </div>
+
+            <!-- Register Form -->
+            <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
+              <!-- Name Fields -->
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="firstName" class="form-label">
+                    Ad <span class="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    [class.is-invalid]="isFieldInvalid('firstName')"
+                    id="firstName"
+                    formControlName="firstName"
+                    placeholder="Adınız"
+                  />
+                  <div
+                    class="invalid-feedback"
+                    *ngIf="isFieldInvalid('firstName')"
+                  >
+                    {{ getFieldError("firstName") }}
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label for="lastName" class="form-label">
+                    Soyad <span class="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    [class.is-invalid]="isFieldInvalid('lastName')"
+                    id="lastName"
+                    formControlName="lastName"
+                    placeholder="Soyadınız"
+                  />
+                  <div
+                    class="invalid-feedback"
+                    *ngIf="isFieldInvalid('lastName')"
+                  >
+                    {{ getFieldError("lastName") }}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Email Field -->
+              <div class="mb-3">
+                <label for="email" class="form-label">
+                  Email Adresi <span class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <i class="bi bi-envelope"></i>
+                  </span>
+                  <input
+                    type="email"
+                    class="form-control"
+                    [class.is-invalid]="isFieldInvalid('email')"
+                    id="email"
+                    formControlName="email"
+                    placeholder="ornek@email.com"
+                  />
+                </div>
+                <div class="invalid-feedback" *ngIf="isFieldInvalid('email')">
+                  {{ getFieldError("email") }}
+                </div>
+              </div>
+
+              <!-- Password Field -->
+              <div class="mb-3">
+                <label for="password" class="form-label">
+                  Şifre <span class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <i class="bi bi-lock"></i>
+                  </span>
+                  <input
+                    [type]="showPassword ? 'text' : 'password'"
+                    class="form-control"
+                    [class.is-invalid]="isFieldInvalid('password')"
+                    id="password"
+                    formControlName="password"
+                    placeholder="En az 6 karakter"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    (click)="togglePasswordVisibility('password')"
+                  >
+                    <i
+                      [class]="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"
+                    ></i>
+                  </button>
+                </div>
+
+                <!-- Password Strength Indicator -->
+                <div class="mt-1" *ngIf="registerForm.get('password')?.value">
+                  <small [class]="getPasswordStrengthClass()">
+                    Şifre güvenliği: {{ getPasswordStrength() }}
+                  </small>
+                </div>
+
+                <div
+                  class="invalid-feedback"
+                  *ngIf="isFieldInvalid('password')"
+                >
+                  {{ getFieldError("password") }}
+                </div>
+              </div>
+
+              <!-- Confirm Password Field -->
+              <div class="mb-3">
+                <label for="confirmPassword" class="form-label">
+                  Şifre Tekrarı <span class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <i class="bi bi-lock-fill"></i>
+                  </span>
+                  <input
+                    [type]="showConfirmPassword ? 'text' : 'password'"
+                    class="form-control"
+                    [class.is-invalid]="isFieldInvalid('confirmPassword')"
+                    id="confirmPassword"
+                    formControlName="confirmPassword"
+                    placeholder="Şifrenizi tekrar giriniz"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    (click)="togglePasswordVisibility('confirmPassword')"
+                  >
+                    <i
+                      [class]="
+                        showConfirmPassword ? 'bi bi-eye-slash' : 'bi bi-eye'
+                      "
+                    ></i>
+                  </button>
+                </div>
+                <div
+                  class="invalid-feedback"
+                  *ngIf="isFieldInvalid('confirmPassword')"
+                >
+                  {{ getFieldError("confirmPassword") }}
+                </div>
+              </div>
+
+              <!-- Terms Checkbox -->
+              <div class="mb-4">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    [class.is-invalid]="isFieldInvalid('termsAccepted')"
+                    type="checkbox"
+                    id="termsAccepted"
+                    formControlName="termsAccepted"
+                  />
+                  <label class="form-check-label" for="termsAccepted">
+                    <a href="#" class="text-decoration-none"
+                      >Kullanım Şartları</a
+                    >'nı ve
+                    <a href="#" class="text-decoration-none"
+                      >Gizlilik Politikası</a
+                    >'nı okudum ve kabul ediyorum.
+                    <span class="text-danger">*</span>
+                  </label>
+                  <div
+                    class="invalid-feedback"
+                    *ngIf="isFieldInvalid('termsAccepted')"
+                  >
+                    {{ getFieldError("termsAccepted") }}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Submit Button -->
+              <div class="d-grid mb-3">
+                <button
+                  type="submit"
+                  class="btn btn-primary btn-lg"
+                  [disabled]="isLoading || registerForm.invalid"
+                >
+                  <ng-container *ngIf="!isLoading">
+                    <i class="bi bi-person-check me-2"></i>
+                    Hesap Oluştur
+                  </ng-container>
+
+                  <ng-container *ngIf="isLoading">
+                    <div class="spinner-border spinner-border-sm me-2"></div>
+                    Hesap oluşturuluyor...
+                  </ng-container>
+                </button>
+              </div>
+            </form>
+
+            <!-- Login Link -->
+            <div class="text-center border-top pt-3">
+              <p class="text-muted mb-0">
+                Zaten hesabınız var mı?
+                <a
+                  routerLink="/auth/login"
+                  class="text-decoration-none fw-semibold"
+                >
+                  Giriş yapın
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

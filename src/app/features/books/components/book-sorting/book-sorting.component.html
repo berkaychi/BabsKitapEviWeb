@@ -1,0 +1,33 @@
+<div class="d-flex gap-2">
+  <!-- Sıralama -->
+  <select 
+    class="form-select form-select-sm w-auto"
+    [ngModel]="filterState?.sortBy"
+    (ngModelChange)="onSortByChange($event)"
+    *ngIf="filterOptions?.sortOptions">
+    <option *ngFor="let option of filterOptions?.sortOptions" [value]="option.value">
+      {{ option.label }}
+    </option>
+  </select>
+
+  <!-- Sıralama Yönü -->
+  <select 
+    class="form-select form-select-sm w-auto"
+    [ngModel]="filterState?.sortDirection"
+    (ngModelChange)="onSortDirectionChange($event)"
+    *ngIf="filterOptions?.sortDirectionOptions">
+    <option *ngFor="let option of filterOptions?.sortDirectionOptions" [value]="option.value">
+      {{ option.label }}
+    </option>
+  </select>
+
+  <!-- Sayfa başına ürün sayısı -->
+  <select 
+    class="form-select form-select-sm w-auto" 
+    [ngModel]="filterState?.pageSize"
+    (ngModelChange)="onPageSizeChange($event)">
+    <option [ngValue]="12">12 ürün</option>
+    <option [ngValue]="24">24 ürün</option>
+    <option [ngValue]="36">36 ürün</option>
+  </select>
+</div>
