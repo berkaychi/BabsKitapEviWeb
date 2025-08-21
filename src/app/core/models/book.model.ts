@@ -71,3 +71,28 @@ export enum SortDirection {
   ASC = 'ASC',
   DESC = 'DESC',
 }
+
+export interface CreateBookRequest {
+  title: string;
+  author: string;
+  isbn: string;
+  publishedDate: string;
+  description?: string;
+  stockQuantity: number;
+  price: number;
+  categoryIds?: number[];
+  publisherIds?: number[];
+  imageFile?: File;
+}
+
+export interface UpdateBookRequest {
+  title?: string;
+  author?: string;
+  isbn?: string;
+  publishedDate?: string;
+  description?: string;
+  stockQuantity?: number;
+  price?: number;
+  categoryIds?: number[];
+  publisherIds?: number[];
+}

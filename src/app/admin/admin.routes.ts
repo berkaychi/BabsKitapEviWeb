@@ -13,6 +13,33 @@ export const adminRoutes: Routes = [
             (m) => m.DashboardComponent
           ),
       },
+      {
+        path: 'books',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./features/books/book-list/book-list.component').then(
+                (m) => m.BookListComponent
+              ),
+          },
+          {
+            path: 'new',
+            loadComponent: () =>
+              import('./features/books/book-form/book-form.component').then(
+                (m) => m.BookFormComponent
+              ),
+          },
+          {
+            path: 'edit/:id',
+            loadComponent: () =>
+              import('./features/books/book-form/book-form.component').then(
+                (m) => m.BookFormComponent
+              ),
+          },
+        ],
+      },
+
       { path: '**', redirectTo: '' },
     ],
   },
