@@ -37,6 +37,7 @@ export class BookFormComponent implements OnInit, OnDestroy {
   bookId?: number;
   loading = true;
   submitting = false;
+  submittingImage = false;
   selectedImageFile?: File;
   currentImageUrl?: string;
   private destroy$ = new Subject<void>();
@@ -53,6 +54,7 @@ export class BookFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.submitting = false; // Ensure submitting is false on init
+    this.submittingImage = false; // Ensure image submitting is false on init
     this.initializeForm();
     this.bookId = Number(this.route.snapshot.paramMap.get('id'));
     this.isEditMode = !!this.bookId;
@@ -242,29 +244,9 @@ export class BookFormComponent implements OnInit, OnDestroy {
 
     this.adminBookService.updateBook(this.bookId, request).subscribe({
       next: () => {
-        if (this.selectedImageFile) {
-          this.adminBookService
-            .updateBookImage(this.bookId!, this.selectedImageFile)
-            .subscribe({
-              next: () => {
-                this.submitting = false;
-                alert('Kitap ve resmi başarıyla güncellendi.');
-                this.goBack();
-              },
-              error: (err) => {
-                console.error('Error updating image:', err);
-                alert(
-                  'Kitap bilgileri güncellendi ancak resim yüklenirken hata oluştu.'
-                );
-                this.submitting = false;
-                this.goBack();
-              },
-            });
-        } else {
-          this.submitting = false;
-          alert('Kitap başarıyla güncellendi.');
-          this.goBack();
-        }
+        this.submitting = false;
+        alert('Kitap bilgileri başarıyla güncellendi.');
+        this.goBack();
       },
       error: (err) => {
         console.error('Error updating book:', err);
@@ -272,6 +254,30 @@ export class BookFormComponent implements OnInit, OnDestroy {
         this.submitting = false;
       },
     });
+  }
+
+  updateBookImage(): void {
+    if (!this.bookId || !this.selectedImageFile) {
+      alert('Lütfen bir resim seçin.');
+      return;
+    }
+
+    this.submittingImage = true;
+    this.adminBookService
+      .updateBookImage(this.bookId, this.selectedImageFile)
+      .subscribe({
+        next: () => {
+          this.submittingImage = false;
+          alert('Kitap resmi başarıyla güncellendi.');
+          // Reset the selected file after successful update
+          this.selectedImageFile = undefined;
+        },
+        error: (err) => {
+          console.error('Error updating book image:', err);
+          alert('Kitap resmi güncellenirken bir hata oluştu.');
+          this.submittingImage = false;
+        },
+      });
   }
 
   goBack(): void {

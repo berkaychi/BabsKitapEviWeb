@@ -143,17 +143,38 @@
                 [src]="currentImageUrl"
                 alt="Mevcut Resim"
                 class="img-fluid rounded"
+                style="max-height: 200px"
               />
             </div>
-            <input
-              type="file"
-              class="form-control"
-              accept="image/*"
-              (change)="onImageSelected($event)"
-            />
-            <small class="text-muted"
-              >Yeni bir resim seçerseniz mevcut resim değiştirilir.</small
-            >
+            <div class="mb-3">
+              <input
+                type="file"
+                class="form-control"
+                accept="image/*"
+                (change)="onImageSelected($event)"
+              />
+              <small class="text-muted"
+                >Yeni bir resim seçerseniz, "Resmi Güncelle" butonuna
+                tıklayın.</small
+              >
+            </div>
+            <div *ngIf="selectedImageFile && isEditMode">
+              <button
+                type="button"
+                class="btn btn-info"
+                [disabled]="submittingImage"
+                (click)="updateBookImage()"
+              >
+                <span
+                  *ngIf="submittingImage"
+                  class="spinner-border spinner-border-sm me-2"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+                <span *ngIf="submittingImage">Resim Güncelleniyor...</span>
+                <span *ngIf="!submittingImage">Resmi Güncelle</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
