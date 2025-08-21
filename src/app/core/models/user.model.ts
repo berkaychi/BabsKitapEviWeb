@@ -36,3 +36,7 @@ export interface ChangePasswordRequest {
 export interface UserResponse {
   user: User;
 }
+
+export interface UserListResponse {
+  users: User[];
+}

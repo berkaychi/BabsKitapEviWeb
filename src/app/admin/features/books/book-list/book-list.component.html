@@ -32,13 +32,21 @@
       <tbody>
         <tr *ngFor="let book of books">
           <td>
-            <img
-              [src]="book.imageUrl"
-              [alt]="book.title"
-              class="book-thumbnail"
-            />
+            <a [routerLink]="['/admin/books/edit', book.id]">
+              <img
+                [src]="book.imageUrl"
+                [alt]="book.title"
+                class="book-thumbnail"
+              />
+            </a>
           </td>
-          <td>{{ book.title }}</td>
+          <td>
+            <a
+              [routerLink]="['/admin/books/edit', book.id]"
+              class="text-decoration-none"
+              >{{ book.title }}</a
+            >
+          </td>
           <td>{{ book.author }}</td>
           <td>{{ book.isbn }}</td>
           <td>{{ book.price | currency : "TRY" : "symbol" : "1.2-2" }}</td>

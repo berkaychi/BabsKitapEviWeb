@@ -39,8 +39,38 @@ export const adminRoutes: Routes = [
           },
         ],
       },
+      {
+        path: 'categories',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import(
+                './features/categories/category-list/category-list.component'
+              ).then((m) => m.CategoryListComponent),
+          },
+          {
+            path: 'new',
+            loadComponent: () =>
+              import(
+                './features/categories/category-form/category-form.component'
+              ).then((m) => m.CategoryFormComponent),
+          },
+          {
+            path: 'edit/:id',
+            loadComponent: () =>
+              import(
+                './features/categories/category-form/category-form.component'
+              ).then((m) => m.CategoryFormComponent),
+          },
+        ],
+      },
 
-      { path: '**', redirectTo: '' },
+      {
+        path: '**',
+        redirectTo: 'admin',
+        pathMatch: 'full',
+      },
     ],
   },
 ];

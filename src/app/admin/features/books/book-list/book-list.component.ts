@@ -4,7 +4,7 @@ import {
   PagedResponse,
   SearchBookQuery,
 } from '../../../../core/models/book.model';
-import { Subject } from 'rxjs';
+import { finalize, Subject, takeUntil } from 'rxjs';
 import { BookService } from '../../../../core/services/book.service';
 import { AdminBookService } from '../../../core/services/admin-book.service';
 import { Router, RouterModule } from '@angular/router';
@@ -51,17 +51,21 @@ export class BookListComponent implements OnInit, OnDestroy {
       searchTerm: this.searchTerm || undefined,
     };
 
-    this.bookService.searchBooks(query).subscribe({
-      next: (response: PagedResponse<Book>) => {
-        this.books = response.items;
-        this.totalPages = response.totalPages;
-        this.loading = false;
-      },
-      error: (error) => {
-        this.error = error.message;
-        this.loading = false;
-      },
-    });
+    this.bookService
+      .searchBooks(query)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => (this.loading = false))
+      )
+      .subscribe({
+        next: (response: PagedResponse<Book>) => {
+          this.books = response.items;
+          this.totalPages = response.totalPages;
+        },
+        error: (error) => {
+          this.error = error.message;
+        },
+      });
   }
 
   onSearch(): void {
