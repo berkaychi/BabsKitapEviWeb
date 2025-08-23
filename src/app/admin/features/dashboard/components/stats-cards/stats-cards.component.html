@@ -19,39 +19,6 @@
                   "
                 ></i>
                 <span
-                  [class]="card.trend.isPositive ? 'text-success' : 'text-danger'"
-                >
-                  {{ card.trend.value }}%
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="stats-cards">
-  <div class="row">
-    <div class="col-xl-3 col-lg-6 col-md-6" *ngFor="let card of statCards">
-      <div class="card stats-card" [class]="'stats-card--' + card.color">
-        <div class="card-body">
-          <div class="stats-content">
-            <div class="stats-icon">
-              <i [class]="'bi ' + card.icon"></i>
-            </div>
-            <div class="stats-info">
-              <h3>{{ card.value }}</h3>
-              <p>{{ card.title }}</p>
-              <div class="stats-trend" *ngIf="card.trend">
-                <i
-                  [class]="
-                    card.trend.isPositive
-                      ? 'bi bi-arrow-up text-success'
-                      : 'bi bi-arrow-down text-danger'
-                  "
-                ></i>
-                <span
                   [class]="
                     card.trend.isPositive ? 'text-success' : 'text-danger'
                   "

@@ -1,0 +1,59 @@
+<div class="admin-publisher-form">
+  <div class="header">
+    <h2>{{ isEditMode ? "Yayınevi Düzenle" : "Yeni Yayınevi Ekle" }}</h2>
+    <button class="btn btn-secondary" (click)="goBack()">
+      <i class="bi bi-arrow-left me-2"></i>Geri Dön
+    </button>
+  </div>
+
+  <div class="text-center my-5" *ngIf="loading">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Yükleniyor...</span>
+    </div>
+  </div>
+
+  <form [formGroup]="publisherForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
+    <div class="card">
+      <div class="card-body">
+        <div class="mb-3">
+          <label for="name" class="form-label">Yayınevi Adı *</label>
+          <input
+            type="text"
+            id="name"
+            formControlName="name"
+            class="form-control"
+            [class.is-invalid]="
+              publisherForm.get('name')?.touched &&
+              publisherForm.get('name')?.invalid
+            "
+          />
+          <div
+            class="invalid-feedback"
+            *ngIf="publisherForm.get('name')?.errors?.['required']"
+          >
+            Yayınevi adı zorunludur.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions mt-4">
+      <button type="button" class="btn btn-secondary me-2" (click)="goBack()">
+        İptal
+      </button>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="publisherForm.invalid || submitting"
+      >
+        <span
+          *ngIf="submitting"
+          class="spinner-border spinner-border-sm me-2"
+          role="status"
+          aria-hidden="true"
+        ></span>
+        <span>{{ isEditMode ? "Güncelle" : "Kaydet" }}</span>
+      </button>
+    </div>
+  </form>
+</div>

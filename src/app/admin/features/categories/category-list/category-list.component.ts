@@ -49,6 +49,7 @@ export class CategoryListComponent implements OnInit, OnDestroy {
           this.categories = data;
         },
         error: (err) => {
+          alert('Kategoriler yüklenemedi.');
           this.error = 'Kategoriler yüklenemedi.';
         },
       });
@@ -68,6 +69,7 @@ export class CategoryListComponent implements OnInit, OnDestroy {
         error: (err) => {
           alert('Kategori silinirken bir hata oluştu.');
           console.error(err);
+          this.error = 'Kategori silinirken bir hata oluştu.';
         },
       });
     }

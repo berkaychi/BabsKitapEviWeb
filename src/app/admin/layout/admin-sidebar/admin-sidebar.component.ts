@@ -27,6 +27,7 @@ export class AdminSidebarComponent {
     { label: 'Kullanıcılar', icon: 'bi-people', route: '/admin/users' },
     { label: 'Siparişler', icon: 'bi-cart', route: '/admin/orders' },
     { label: 'Kategoriler', icon: 'bi-tags', route: '/admin/categories' },
+    { label: 'Yayınevleri', icon: 'bi-house', route: '/admin/publishers' },
     { label: 'Raporlar', icon: 'bi-graph-up', route: '/admin/reports' },
   ];
 }

@@ -65,6 +65,58 @@ export const adminRoutes: Routes = [
           },
         ],
       },
+      {
+        path: 'publishers',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import(
+                './features/publishers/publisher-list/publisher-list.component'
+              ).then((m) => m.PublisherListComponent),
+          },
+          {
+            path: 'new',
+            loadComponent: () =>
+              import(
+                './features/publishers/publisher-form/publisher-form.component'
+              ).then((m) => m.PublisherFormComponent),
+          },
+          {
+            path: 'edit/:id',
+            loadComponent: () =>
+              import(
+                './features/publishers/publisher-form/publisher-form.component'
+              ).then((m) => m.PublisherFormComponent),
+          },
+        ],
+      },
+      {
+        path: 'users',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./features/users/user-list/user-list.component').then(
+                (m) => m.UserListComponent
+              ),
+          },
+          {
+            path: 'new',
+            loadComponent: () =>
+              import('./features/users/user-form/user-form.component').then(
+                (m) => m.UserFormComponent
+              ),
+          },
+          {
+            path: 'edit/:id',
+            loadComponent: () =>
+              import('./features/users/user-form/user-form.component').then(
+                (m) => m.UserFormComponent
+              ),
+          },
+        ],
+      },
 
       {
         path: '**',

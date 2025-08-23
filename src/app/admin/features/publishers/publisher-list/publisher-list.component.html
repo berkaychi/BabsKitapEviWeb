@@ -1,0 +1,64 @@
+<div class="admin-publisher-list">
+  <div class="header">
+    <h2>Yayınevi Yönetimi</h2>
+    <button class="btn btn-primary" routerLink="/admin/publishers/new">
+      <i class="bi bi-plus-lg me-2"></i>Yeni Yayınevi Ekle
+    </button>
+  </div>
+
+  <div class="text-center my-5" *ngIf="loading">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Yükleniyor...</span>
+    </div>
+  </div>
+
+  <div class="alert alert-danger" *ngIf="!loading && error">
+    {{ error }}
+  </div>
+
+  <div
+    class="table-responsive"
+    *ngIf="!loading && !error && publishers.length > 0"
+  >
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Yayınevi Adı</th>
+          <th class="text-end">İşlemler</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let publisher of publishers">
+          <td>{{ publisher.id }}</td>
+          <td>{{ publisher.name }}</td>
+          <td class="text-end">
+            <div class="btn-group">
+              <button
+                class="btn btn-sm btn-outline-primary"
+                [routerLink]="['/admin/publishers', 'edit', publisher.id]"
+                title="Düzenle"
+              >
+                <i class="bi bi-pencil-fill"></i>
+              </button>
+              <button
+                class="btn btn-sm btn-outline-danger"
+                (click)="deletePublisher(publisher)"
+                title="Sil"
+              >
+                <i class="bi bi-trash-fill"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div
+    class="alert alert-info"
+    *ngIf="!loading && !error && publishers.length === 0"
+  >
+    Gösterilecek yayınevi bulunamadı.
+  </div>
+</div>

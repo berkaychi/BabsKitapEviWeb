@@ -5,6 +5,11 @@ export interface BookCategory {
   name: string;
 }
 
+export interface BookPublisher {
+  id: number;
+  name: string;
+}
+
 export interface Book {
   id: number;
   title: string;
@@ -16,7 +21,7 @@ export interface Book {
   stockQuantity: number;
   price: number;
   categories: BookCategory[];
-  publishers: Publisher[];
+  publishers: BookPublisher[];
 }
 
 export interface ApiListResponse<T> {

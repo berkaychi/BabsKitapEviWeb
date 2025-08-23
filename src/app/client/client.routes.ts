@@ -56,6 +56,13 @@ export const clientRoutes: Routes = [
           ).then((m) => m.BookListComponent),
       },
       {
+        path: 'books/publisher/:publisherId',
+        loadComponent: () =>
+          import(
+            '../client/features/books/components/book-list/book-list.component'
+          ).then((m) => m.BookListComponent),
+      },
+      {
         path: 'categories',
         loadComponent: () =>
           import(
