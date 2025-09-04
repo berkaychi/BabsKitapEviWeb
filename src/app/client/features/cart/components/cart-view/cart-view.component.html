@@ -13,7 +13,10 @@
   <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
 
   <ng-container *ngIf="!loading && !error">
-    <div *ngIf="!cart || cart.items.length === 0" class="empty-state card p-4 text-center">
+    <div
+      *ngIf="!cart || cart.items.length === 0"
+      class="empty-state card p-4 text-center"
+    >
       <div class="mb-3"><i class="bi bi-bag-x fs-1 text-muted"></i></div>
       <h5 class="mb-2">Sepetiniz boş</h5>
       <p class="text-muted mb-3">Hadi birkaç kitap ekleyelim!</p>
@@ -39,25 +42,54 @@
                 <tr *ngFor="let item of cart.items">
                   <td>
                     <div class="d-flex align-items-center gap-3">
-                      <img [src]="imageCache[item.bookId] || 'https://via.placeholder.com/56x72?text=No+Image'" alt="{{ item.bookTitle }}" class="rounded shadow-sm cart-item-thumb" width="56" height="72" />
+                      <img
+                        [src]="
+                          imageCache[item.bookId] ||
+                          'https://via.placeholder.com/56x72?text=No+Image'
+                        "
+                        alt="{{ item.bookTitle }}"
+                        class="rounded shadow-sm cart-item-thumb"
+                        width="56"
+                        height="72"
+                      />
                       <div class="fw-semibold">{{ item.bookTitle }}</div>
                     </div>
                   </td>
                   <td>
-                    <div class="d-flex justify-content-center align-items-center gap-2">
-                      <button class="btn btn-sm btn-outline-secondary" (click)="decrease(item.bookId)">
+                    <div
+                      class="d-flex justify-content-center align-items-center gap-2"
+                    >
+                      <button
+                        class="btn btn-sm btn-outline-secondary"
+                        (click)="decrease(item.bookId)"
+                      >
                         <i class="bi bi-dash"></i>
                       </button>
-                      <span class="min-w-2ch text-center">{{ item.quantity }}</span>
-                      <button class="btn btn-sm btn-outline-secondary" (click)="increase(item.bookId)">
+                      <span class="min-w-2ch text-center">{{
+                        item.quantity
+                      }}</span>
+                      <button
+                        class="btn btn-sm btn-outline-secondary"
+                        (click)="increase(item.bookId)"
+                      >
                         <i class="bi bi-plus"></i>
                       </button>
                     </div>
                   </td>
-                  <td class="text-end">{{ item.price | currency : 'TRY' : 'symbol' : '1.2-2' }}</td>
-                  <td class="text-end">{{ item.price * item.quantity | currency : 'TRY' : 'symbol' : '1.2-2' }}</td>
                   <td class="text-end">
-                    <button class="btn btn-sm btn-outline-danger" (click)="remove(item.bookId)">
+                    {{ item.price | currency : "TRY" : "symbol" : "1.2-2" }}
+                  </td>
+                  <td class="text-end">
+                    {{
+                      item.price * item.quantity
+                        | currency : "TRY" : "symbol" : "1.2-2"
+                    }}
+                  </td>
+                  <td class="text-end">
+                    <button
+                      class="btn btn-sm btn-outline-danger"
+                      (click)="remove(item.bookId)"
+                    >
                       <i class="bi bi-trash"></i>
                     </button>
                   </td>
@@ -74,7 +106,9 @@
           <h6 class="mb-3">Sipariş Özeti</h6>
           <div class="d-flex align-items-center justify-content-between mb-2">
             <span class="text-muted">Ara Toplam</span>
-            <span class="fw-semibold">{{ subtotal | currency : 'TRY' : 'symbol' : '1.2-2' }}</span>
+            <span class="fw-semibold">{{
+              subtotal | currency : "TRY" : "symbol" : "1.2-2"
+            }}</span>
           </div>
           <div class="d-flex align-items-center justify-content-between mb-2">
             <span class="text-muted">Kargo</span>
@@ -83,10 +117,18 @@
           <hr />
           <div class="d-flex align-items-center justify-content-between mb-3">
             <span class="fw-semibold">Genel Toplam</span>
-            <span class="fw-bold">{{ subtotal | currency : 'TRY' : 'symbol' : '1.2-2' }}</span>
+            <span class="fw-bold">{{
+              subtotal | currency : "TRY" : "symbol" : "1.2-2"
+            }}</span>
           </div>
-          <button class="btn btn-primary w-100" type="button" disabled>
-            Devam Et (yakında)
+          <button
+            class="btn btn-primary w-100"
+            type="button"
+            (click)="goToCheckout()"
+            [disabled]="!cart || !cart.items.length"
+          >
+            <i class="fas fa-credit-card me-2"></i>
+            Ödemeye Geç
           </button>
         </div>
       </div>

@@ -2,28 +2,12 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { User, UpdateUserRequest } from '../../../core/models/user.model';
+import { ApiResponse } from '../../../core/models/api-response.model';
 
 export interface UpdateUserRoleRequest {
   role: 'Admin' | 'User';
-}
-
-export interface AdminUserListResponse {
-  success: boolean;
-  message: string;
-  data: User[];
-}
-
-export interface AdminUserResponse {
-  success: boolean;
-  message: string;
-  data: User;
-}
-
-export interface AdminMessageResponse {
-  success: boolean;
-  message: string;
-  data: null;
 }
 
 @Injectable({
@@ -34,35 +18,70 @@ export class AdminUserService {
 
   constructor(private http: HttpClient) {}
 
-  getAllUsers(): Observable<AdminUserListResponse | User[]> {
-    return this.http.get<AdminUserListResponse | User[]>(this.apiUrl);
-  }
-
-  getUserById(id: string): Observable<AdminUserResponse | User> {
-    return this.http.get<AdminUserResponse | User>(`${this.apiUrl}/${id}`);
-  }
-
-  updateUser(
-    id: string,
-    request: UpdateUserRequest
-  ): Observable<AdminUserResponse | User> {
-    return this.http.put<AdminUserResponse | User>(
-      `${this.apiUrl}/${id}`,
-      request
+  getAllUsers(): Observable<User[]> {
+    return this.http.get<ApiResponse<User[]>>(this.apiUrl).pipe(
+      map((response) => {
+        if (response.isSuccess && response.data) {
+          return response.data;
+        }
+        throw new Error(
+          response.errors?.join(', ') || 'Kullanıcılar alınamadı.'
+        );
+      })
     );
   }
 
-  updateUserRole(
-    id: string,
-    request: UpdateUserRoleRequest
-  ): Observable<AdminUserResponse | User> {
-    return this.http.put<AdminUserResponse | User>(
-      `${this.apiUrl}/${id}/role`,
-      request
+  getUserById(id: string): Observable<User> {
+    return this.http.get<ApiResponse<User>>(`${this.apiUrl}/${id}`).pipe(
+      map((response) => {
+        if (response.isSuccess && response.data) {
+          return response.data;
+        }
+        throw new Error(
+          response.errors?.join(', ') || 'Kullanıcı detayı alınamadı.'
+        );
+      })
     );
   }
 
-  deleteUser(id: string): Observable<AdminMessageResponse | any> {
-    return this.http.delete<AdminMessageResponse | any>(`${this.apiUrl}/${id}`);
+  updateUser(id: string, request: UpdateUserRequest): Observable<User> {
+    return this.http
+      .put<ApiResponse<User>>(`${this.apiUrl}/${id}`, request)
+      .pipe(
+        map((response) => {
+          if (response.isSuccess && response.data) {
+            return response.data;
+          }
+          throw new Error(
+            response.errors?.join(', ') || 'Kullanıcı güncellenemedi.'
+          );
+        })
+      );
+  }
+
+  updateUserRole(id: string, request: UpdateUserRoleRequest): Observable<User> {
+    return this.http
+      .put<ApiResponse<User>>(`${this.apiUrl}/${id}/role`, request)
+      .pipe(
+        map((response) => {
+          if (response.isSuccess && response.data) {
+            return response.data;
+          }
+          throw new Error(
+            response.errors?.join(', ') || 'Kullanıcı rolü güncellenemedi.'
+          );
+        })
+      );
+  }
+
+  deleteUser(id: string): Observable<void> {
+    return this.http.delete<ApiResponse<null>>(`${this.apiUrl}/${id}`).pipe(
+      map((response) => {
+        if (response.isSuccess) {
+          return;
+        }
+        throw new Error(response.errors?.join(', ') || 'Kullanıcı silinemedi.');
+      })
+    );
   }
 }

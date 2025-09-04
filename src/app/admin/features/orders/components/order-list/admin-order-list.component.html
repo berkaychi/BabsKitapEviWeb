@@ -1,0 +1,147 @@
+<div class="admin-order-list">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">
+      <i class="fas fa-shopping-cart"></i>
+      Sipariş Yönetimi
+    </h1>
+    <button
+      class="btn btn-outline-secondary refresh-btn"
+      (click)="refreshOrders()"
+      [disabled]="loading"
+    >
+      <i class="fas fa-sync-alt" [class.fa-spin]="loading"></i>
+      Yenile
+    </button>
+  </div>
+
+  <!-- Error Alert -->
+  <div
+    *ngIf="error"
+    class="alert alert-danger alert-dismissible fade show"
+    role="alert"
+  >
+    <i class="fas fa-exclamation-triangle"></i>
+    <strong>Hata:</strong> {{ error }}
+    <button type="button" class="btn-close" (click)="error = null"></button>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-section">
+    <app-order-filters></app-order-filters>
+  </div>
+
+  <!-- Orders Content -->
+  <div *ngIf="!error" class="orders-content">
+    <!-- Summary Cards -->
+    <div class="summary-section">
+      <app-order-summary
+        [totalCount]="totalCount"
+        [loading]="loading"
+        [hasActiveFilters]="hasActiveFilters()"
+      ></app-order-summary>
+    </div>
+
+    <!-- Orders Table -->
+    <div class="table-container" *ngIf="orders.length > 0 && !loading">
+      <div class="table-responsive">
+        <table class="table table-hover order-table">
+          <!-- Table Header -->
+          <thead class="table-dark">
+            <tr>
+              <th class="order-id-header">
+                <i class="fas fa-hashtag"></i>
+                Sipariş
+              </th>
+              <th class="customer-header">
+                <i class="fas fa-user"></i>
+                Müşteri
+              </th>
+              <th class="items-header">
+                <i class="fas fa-list"></i>
+                Ürünler
+              </th>
+              <th class="date-header">
+                <i class="fas fa-calendar"></i>
+                Tarih
+              </th>
+              <th class="status-header">
+                <i class="fas fa-info-circle"></i>
+                Durum
+              </th>
+              <th class="amount-header">
+                <i class="fas fa-lira-sign"></i>
+                Tutar
+              </th>
+              <th class="actions-header">
+                <i class="fas fa-cogs"></i>
+                İşlemler
+              </th>
+            </tr>
+          </thead>
+
+          <!-- Table Body -->
+          <tbody>
+            <tr
+              *ngFor="let order of orders; trackBy: trackByOrderId"
+              class="order-row"
+            >
+              <app-order-row
+                [order]="order"
+                [bookImages]="bookImages"
+                (orderUpdated)="onOrderUpdated($event)"
+              ></app-order-row>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-state">
+      <div class="loading-spinner">
+        <i class="fas fa-spinner fa-spin"></i>
+        <span>Siparişler yükleniyor...</span>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="orders.length === 0 && !loading" class="empty-state">
+      <div class="empty-state-content">
+        <i class="fas fa-shopping-cart fa-4x text-muted"></i>
+        <h3 class="empty-state-title">Sipariş Bulunamadı</h3>
+        <p class="empty-state-message">
+          <span *ngIf="hasActiveFilters(); else noOrdersMessage">
+            Arama kriterlerinize uygun sonuç bulunamadı.
+            <br />
+            Filtreleri genişleterek daha fazla sonuç görebilirsiniz.
+          </span>
+          <ng-template #noOrdersMessage>
+            Henüz hiç sipariş bulunmuyor.
+            <br />
+            İlk siparişler geldiğinde burada görünecektir.
+          </ng-template>
+        </p>
+        <button
+          *ngIf="hasActiveFilters()"
+          class="btn btn-primary clear-filters-btn"
+          (click)="onClearFilters()"
+        >
+          <i class="fas fa-filter"></i>
+          Filtreleri Temizle
+        </button>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-section" *ngIf="totalPages > 1">
+      <app-order-pagination
+        [currentPage]="currentPage"
+        [totalPages]="totalPages"
+        [hasPreviousPage]="hasPreviousPage"
+        [hasNextPage]="hasNextPage"
+        (pageChange)="onPageChange($event)"
+      ></app-order-pagination>
+    </div>
+  </div>
+</div>

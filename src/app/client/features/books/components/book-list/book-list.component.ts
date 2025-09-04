@@ -10,6 +10,7 @@ import { BookFiltersComponent } from '../book-filters/book-filters.component';
 import { BookSortingComponent } from '../book-sorting/book-sorting.component';
 import { BookPaginationComponent } from '../book-pagination/book-pagination.component';
 import { BookFilterService } from '../../../../../core/services/book-filter.service';
+import { LoadingService } from '../../../../../core/services/loading.service';
 
 @Component({
   selector: 'app-book-list',
@@ -36,12 +37,14 @@ export class BookListComponent implements OnInit, OnDestroy {
   constructor(
     private bookService: BookService,
     private filterService: BookFilterService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private loadingService: LoadingService
   ) {}
 
   ngOnInit(): void {
     this.filterService.initializeFromRoute(this.route);
     this.setupBookSubscription();
+    this.setupLoadingSubscription();
   }
 
   ngOnDestroy(): void {
@@ -54,11 +57,11 @@ export class BookListComponent implements OnInit, OnDestroy {
       .pipe(
         takeUntil(this.destroy$),
         switchMap((query) => {
-          this.loading = true;
+          this.loadingService.setLoading(true);
           this.error = null;
           return this.bookService.searchBooks(query).pipe(
             finalize(() => {
-              this.loading = false;
+              this.loadingService.stopLoading();
             })
           );
         })
@@ -73,6 +76,14 @@ export class BookListComponent implements OnInit, OnDestroy {
           this.books = [];
           this.pagedResponse = null;
         },
+      });
+  }
+
+  private setupLoadingSubscription(): void {
+    this.loadingService.isLoading$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((loading) => {
+        this.loading = loading;
       });
   }
 

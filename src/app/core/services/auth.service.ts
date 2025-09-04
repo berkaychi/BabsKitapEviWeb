@@ -11,11 +11,13 @@ import {
   tap,
   Subject,
   finalize,
+  map,
 } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { User, LoginRequest, RegisterRequest } from '../models/user.model';
 import { AuthResponse, UserInfo } from '../models/auth-response.model';
+import { ApiResponse } from '../models/api-response.model';
 
 @Injectable({
   providedIn: 'root',
@@ -40,27 +42,35 @@ export class AuthService {
     this.loadingSubject.next(true);
 
     return this.http
-      .post<AuthResponse>(`${this.apiUrl}/login`, credentials)
+      .post<ApiResponse<AuthResponse>>(`${this.apiUrl}/login`, credentials)
       .pipe(
-        tap((response) => {
-          this.handleAuthSuccess(response);
+        map((response) => {
+          if (response.isSuccess && response.data) {
+            this.handleAuthSuccess(response.data);
+            return response.data;
+          }
+          throw new Error(response.errors?.join(', ') || 'Giriş yapılamadı.');
         }),
-        catchError((err) => {
-          throw err;
-        }),
-        tap(() => this.loadingSubject.next(false))
+        finalize(() => this.loadingSubject.next(false))
       );
   }
 
   register(userData: RegisterRequest): Observable<any> {
     this.loadingSubject.next(true);
 
-    return this.http.post<any>(`${this.apiUrl}/register`, userData).pipe(
-      catchError((err) => {
-        throw err;
-      }),
-      finalize(() => this.loadingSubject.next(false))
-    );
+    return this.http
+      .post<ApiResponse<any>>(`${this.apiUrl}/register`, userData)
+      .pipe(
+        map((response) => {
+          if (response.isSuccess && response.data) {
+            return response.data;
+          }
+          throw new Error(
+            response.errors?.join(', ') || 'Kayıt işlemi başarısız.'
+          );
+        }),
+        finalize(() => this.loadingSubject.next(false))
+      );
   }
 
   logout(): void {
@@ -129,28 +139,30 @@ export class AuthService {
     this.isRefreshing = true;
 
     return this.http
-      .post<{ accessToken: string; refreshToken: string }>(
+      .post<ApiResponse<{ accessToken: string; refreshToken: string }>>(
         `${this.apiUrl}/refresh`,
         { refreshToken }
       )
       .pipe(
-        tap({
-          next: (res) => {
-            if (res?.accessToken && res?.refreshToken) {
-              localStorage.setItem('accessToken', res.accessToken);
-              localStorage.setItem('refreshToken', res.refreshToken);
-              this.refreshSubject.next(true);
-            } else {
-              this.refreshSubject.next(false);
-              this.logout();
-            }
-          },
-          error: () => {
+        map((response) => {
+          if (response.isSuccess && response.data) {
+            const { accessToken, refreshToken: newRefreshToken } =
+              response.data;
+            localStorage.setItem('accessToken', accessToken);
+            localStorage.setItem('refreshToken', newRefreshToken);
+            this.refreshSubject.next(true);
+            return true;
+          } else {
             this.refreshSubject.next(false);
             this.logout();
-          },
+            return false;
+          }
         }),
-        switchMap((res) => of(!!res?.accessToken)),
+        catchError(() => {
+          this.refreshSubject.next(false);
+          this.logout();
+          return of(false);
+        }),
         finalize(() => {
           this.isRefreshing = false;
         })

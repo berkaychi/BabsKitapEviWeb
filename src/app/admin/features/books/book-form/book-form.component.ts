@@ -53,8 +53,8 @@ export class BookFormComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.submitting = false; // Ensure submitting is false on init
-    this.submittingImage = false; // Ensure image submitting is false on init
+    this.submitting = false;
+    this.submittingImage = false;
     this.initializeForm();
     this.bookId = Number(this.route.snapshot.paramMap.get('id'));
     this.isEditMode = !!this.bookId;
@@ -143,7 +143,6 @@ export class BookFormComponent implements OnInit, OnDestroy {
                 : '',
             });
 
-            // Safe mapping for categories and publishers
             this.selectedCategoryIds =
               book.categories && Array.isArray(book.categories)
                 ? book.categories.map((c) => c.id)
@@ -269,7 +268,6 @@ export class BookFormComponent implements OnInit, OnDestroy {
         next: () => {
           this.submittingImage = false;
           alert('Kitap resmi başarıyla güncellendi.');
-          // Reset the selected file after successful update
           this.selectedImageFile = undefined;
         },
         error: (err) => {

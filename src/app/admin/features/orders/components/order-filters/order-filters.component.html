@@ -1,0 +1,71 @@
+<!-- Order Filters Component -->
+<div class="card mb-4">
+  <div class="card-body">
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label">Arama</label>
+        <div class="input-group">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Sipariş No, müşteri adı, kitap..."
+            [value]="filterState?.searchTerm || ''"
+            (input)="onSearchTermChange($any($event.target).value)"
+          />
+          <span class="input-group-text" *ngIf="isSearching">
+            <i class="fas fa-spinner fa-spin"></i>
+          </span>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Durum</label>
+        <select
+          class="form-select"
+          [value]="filterState?.status || ''"
+          (change)="onStatusChange($any($event.target).value)"
+        >
+          <option value="">Tüm Durumlar</option>
+          <option
+            *ngFor="let status of filterOptions?.statusOptions"
+            [value]="status.value"
+          >
+            {{ status.label }}
+          </option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Başlangıç</label>
+        <input
+          type="date"
+          class="form-control"
+          [value]="filterState?.startDate || ''"
+          (change)="
+            onDateRangeChange(
+              $any($event.target).value,
+              filterState?.endDate || null
+            )
+          "
+        />
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Bitiş</label>
+        <input
+          type="date"
+          class="form-control"
+          [value]="filterState?.endDate || ''"
+          (change)="
+            onDateRangeChange(
+              filterState?.startDate || null,
+              $any($event.target).value
+            )
+          "
+        />
+      </div>
+      <div class="col-md-2 d-flex align-items-end">
+        <button class="btn btn-outline-secondary" (click)="onClearFilters()">
+          <i class="fas fa-times"></i> Temizle
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

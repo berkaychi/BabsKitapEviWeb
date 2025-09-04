@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import {
@@ -7,8 +7,10 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
+import { Subject, takeUntil } from 'rxjs';
 
 import { AuthService } from '../../../../../core/services/auth.service';
+import { LoadingService } from '../../../../../core/services/loading.service';
 import { LoadingComponent } from '../../../../../shared/components/loading/loading.component';
 
 @Component({
@@ -18,17 +20,20 @@ import { LoadingComponent } from '../../../../../shared/components/loading/loadi
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent implements OnInit, OnDestroy {
   registerForm!: FormGroup;
   errorMessage = '';
   showPassword = false;
   showConfirmPassword = false;
   isLoading = false;
 
+  private destroy$ = new Subject<void>();
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private loadingService: LoadingService
   ) {
     this.createForm();
   }
@@ -37,6 +42,20 @@ export class RegisterComponent implements OnInit {
     if (this.authService.isLoggedIn()) {
       this.router.navigate(['/books']);
     }
+    this.setupLoadingSubscription();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private setupLoadingSubscription(): void {
+    this.loadingService.isLoading$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((loading) => {
+        this.isLoading = loading;
+      });
   }
 
   private createForm(): void {
@@ -73,7 +92,7 @@ export class RegisterComponent implements OnInit {
   onSubmit(): void {
     if (this.registerForm.valid) {
       this.errorMessage = '';
-      this.isLoading = true;
+      this.loadingService.startLoading('register');
       const userData = this.registerForm.value;
 
       const { confirmPassword, ...registerData } = userData;
@@ -81,12 +100,12 @@ export class RegisterComponent implements OnInit {
       this.authService.register(registerData).subscribe({
         next: (response) => {
           console.log('Register successful:', response);
-          this.isLoading = false;
+          this.loadingService.stopLoading('register');
           this.router.navigate(['/login']);
         },
         error: (error) => {
           this.errorMessage = error.message;
-          this.isLoading = false;
+          this.loadingService.stopLoading('register');
           console.error('Register error:', error);
         },
       });

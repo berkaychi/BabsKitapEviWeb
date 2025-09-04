@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CategoryService } from '../../../../core/services/category.service';
 import { AdminCategoryService } from '../../../core/services/admin-category.service';
 import { finalize, Subject, takeUntil } from 'rxjs';
@@ -15,7 +15,7 @@ import { CreateCategoryRequest } from '../../../../core/models/category.model';
 @Component({
   selector: 'app-category-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './category-form.component.html',
   styleUrl: './category-form.component.scss',
 })
@@ -131,6 +131,6 @@ export class CategoryFormComponent implements OnInit, OnDestroy {
   }
 
   goBack(): void {
-    this.router.navigate(['/admin/categories']);
+    this.router.navigate(['../'], { relativeTo: this.route });
   }
 }

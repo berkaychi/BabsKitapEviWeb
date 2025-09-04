@@ -1,7 +1,7 @@
 <div class="admin-category-list">
   <div class="header">
     <h2>Kategori Yönetimi</h2>
-    <button class="btn btn-primary" routerLink="/admin/categories/new">
+    <button class="btn btn-primary" [routerLink]="['new']">
       <i class="bi bi-plus-lg me-2"></i>Yeni Kategori Ekle
     </button>
   </div>
@@ -35,8 +35,15 @@
           <td class="text-end">
             <div class="btn-group">
               <button
+                class="btn btn-sm btn-outline-info"
+                [routerLink]="[category.id]"
+                title="Kitapları Görüntüle"
+              >
+                <i class="bi bi-eye-fill"></i>
+              </button>
+              <button
                 class="btn btn-sm btn-outline-primary"
-                [routerLink]="['/admin/categories', 'edit', category.id]"
+                [routerLink]="['edit', category.id]"
                 title="Düzenle"
               >
                 <i class="bi bi-pencil-fill"></i>

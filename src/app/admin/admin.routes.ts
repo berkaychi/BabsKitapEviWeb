@@ -57,6 +57,13 @@ export const adminRoutes: Routes = [
               ).then((m) => m.CategoryFormComponent),
           },
           {
+            path: ':id',
+            loadComponent: () =>
+              import(
+                './features/categories/category-detail/category-detail.component'
+              ).then((m) => m.CategoryDetailComponent),
+          },
+          {
             path: 'edit/:id',
             loadComponent: () =>
               import(
@@ -89,6 +96,13 @@ export const adminRoutes: Routes = [
                 './features/publishers/publisher-form/publisher-form.component'
               ).then((m) => m.PublisherFormComponent),
           },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import(
+                './features/publishers/publisher-detail/publisher-detail.component'
+              ).then((m) => m.PublisherDetailComponent),
+          },
         ],
       },
       {
@@ -114,6 +128,25 @@ export const adminRoutes: Routes = [
               import('./features/users/user-form/user-form.component').then(
                 (m) => m.UserFormComponent
               ),
+          },
+        ],
+      },
+      {
+        path: 'orders',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import(
+                './features/orders/components/order-list/admin-order-list.component'
+              ).then((m) => m.AdminOrderListComponent),
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import(
+                './features/orders/components/order-detail/admin-order-detail.component'
+              ).then((m) => m.AdminOrderDetailComponent),
           },
         ],
       },

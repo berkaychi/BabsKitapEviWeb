@@ -37,7 +37,6 @@ export class AdminDashboardService {
   constructor(private http: HttpClient) {}
 
   getDashboardStats(): Observable<DashboardStats> {
-    // Geçici mock data - gerçek API'ye bağlandığında bu kısım değişecek
     const mockStats: DashboardStats = {
       totalBooks: 1250,
       totalUsers: 850,
@@ -50,8 +49,6 @@ export class AdminDashboardService {
     };
 
     return of(mockStats);
-    // Gerçek API için:
-    // return this.http.get<DashboardStats>(`${this.apiUrl}/dashboard/stats`);
   }
 
   getSalesData(days: number = 30): Observable<SalesData[]> {

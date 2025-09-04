@@ -14,6 +14,7 @@ export interface Book {
   id: number;
   title: string;
   author: string;
+  slug: string;
   isbn: string;
   publishedDate: string;
   description: string;

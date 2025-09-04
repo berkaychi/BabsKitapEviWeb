@@ -1,0 +1,45 @@
+.filters-section {
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  border: 1px solid #e2e8f0;
+
+  .form-label {
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 6px;
+  }
+
+  .form-control,
+  .form-select {
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+
+    &:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 1200px) {
+  .filters-section {
+    .row {
+      gap: 12px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .filters-section {
+    padding: 16px;
+
+    .col-md-3,
+    .col-md-2 {
+      width: 100%;
+      margin-bottom: 12px;
+    }
+  }
+}

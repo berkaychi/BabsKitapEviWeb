@@ -7,6 +7,8 @@ import {
   UpdateBookRequest,
 } from '../../../core/models/book.model';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { ApiResponse } from '../../../core/models/api-response.model';
 
 @Injectable({
   providedIn: 'root',
@@ -43,21 +45,95 @@ export class AdminBookService {
       formData.append('ImageFile', request.imageFile);
     }
 
-    return this.http.post<Book>(this.apiUrl, formData);
+    return this.http.post<ApiResponse<Book>>(this.apiUrl, formData).pipe(
+      map((response) => {
+        if (response.isSuccess && response.data) {
+          return response.data;
+        }
+        throw new Error(response.errors?.join(', ') || 'Kitap oluşturulamadı.');
+      })
+    );
   }
 
   updateBook(id: number, request: UpdateBookRequest): Observable<Book> {
-    return this.http.put<Book>(`${this.apiUrl}/${id}`, request);
+    return this.http
+      .put<ApiResponse<Book>>(`${this.apiUrl}/${id}`, request)
+      .pipe(
+        map((response) => {
+          if (response.isSuccess && response.data) {
+            return response.data;
+          }
+          throw new Error(
+            response.errors?.join(', ') || 'Kitap güncellenemedi.'
+          );
+        })
+      );
   }
 
   updateBookImage(id: number, imageFile: File): Observable<Book> {
     const formData = new FormData();
     formData.append('ImageFile', imageFile);
 
-    return this.http.put<Book>(`${this.apiUrl}/${id}/image`, formData);
+    return this.http
+      .put<ApiResponse<Book>>(`${this.apiUrl}/${id}/image`, formData)
+      .pipe(
+        map((response) => {
+          if (response.isSuccess && response.data) {
+            return response.data;
+          }
+          throw new Error(
+            response.errors?.join(', ') || 'Kitap resmi güncellenemedi.'
+          );
+        })
+      );
+  }
+
+  updateBookPublisher(id: number, publisherIds: number[]): Observable<Book> {
+    const requestBody = {
+      publisherIds: publisherIds,
+    };
+
+    return this.http
+      .put<ApiResponse<Book>>(`${this.apiUrl}/${id}/publisher`, requestBody)
+      .pipe(
+        map((response) => {
+          if (response.isSuccess && response.data) {
+            return response.data;
+          }
+          throw new Error(
+            response.errors?.join(', ') || 'Kitap yayınevi güncellenemedi.'
+          );
+        })
+      );
+  }
+
+  updateBookCategories(id: number, categoryIds: number[]): Observable<Book> {
+    const requestBody = {
+      categoryIds: categoryIds,
+    };
+
+    return this.http
+      .put<ApiResponse<Book>>(`${this.apiUrl}/${id}/categories`, requestBody)
+      .pipe(
+        map((response) => {
+          if (response.isSuccess && response.data) {
+            return response.data;
+          }
+          throw new Error(
+            response.errors?.join(', ') || 'Kitap kategorileri güncellenemedi.'
+          );
+        })
+      );
   }
 
   deleteBook(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<ApiResponse<null>>(`${this.apiUrl}/${id}`).pipe(
+      map((response) => {
+        if (response.isSuccess) {
+          return;
+        }
+        throw new Error(response.errors?.join(', ') || 'Kitap silinemedi.');
+      })
+    );
   }
 }

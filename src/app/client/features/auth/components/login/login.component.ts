@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -7,7 +7,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { AuthService } from '../../../../../core/services/auth.service';
+import { LoadingService } from '../../../../../core/services/loading.service';
 
 @Component({
   selector: 'app-login',
@@ -16,16 +18,19 @@ import { AuthService } from '../../../../../core/services/auth.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
   loginForm!: FormGroup;
   errorMessage: string = '';
   showPassword = false;
   isLoading = false;
 
+  private destroy$ = new Subject<void>();
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private loadingService: LoadingService
   ) {
     this.createForm();
   }
@@ -41,6 +46,20 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/books']);
       }
     }
+    this.setupLoadingSubscription();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private setupLoadingSubscription(): void {
+    this.loadingService.isLoading$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((loading) => {
+        this.isLoading = loading;
+      });
   }
 
   private createForm(): void {
@@ -54,12 +73,12 @@ export class LoginComponent implements OnInit {
   onSubmit(): void {
     if (this.loginForm.valid) {
       this.errorMessage = '';
-      this.isLoading = true;
+      this.loadingService.startLoading('login');
       const credentials = this.loginForm.value;
 
       this.authService.login(credentials).subscribe({
         next: (response) => {
-          this.isLoading = false;
+          this.loadingService.stopLoading('login');
           if (
             response.user.role === 'Admin' ||
             response.user.role === 'admin'
@@ -72,7 +91,7 @@ export class LoginComponent implements OnInit {
         error: (error) => {
           this.errorMessage =
             error.message || 'Login failed. Please try again.';
-          this.isLoading = false;
+          this.loadingService.stopLoading('login');
         },
       });
     } else {

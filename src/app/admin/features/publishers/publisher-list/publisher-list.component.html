@@ -35,6 +35,13 @@
           <td class="text-end">
             <div class="btn-group">
               <button
+                class="btn btn-sm btn-outline-info"
+                [routerLink]="['/admin/publishers', publisher.id]"
+                title="Kitapları Görüntüle"
+              >
+                <i class="bi bi-eye-fill"></i>
+              </button>
+              <button
                 class="btn btn-sm btn-outline-primary"
                 [routerLink]="['/admin/publishers', 'edit', publisher.id]"
                 title="Düzenle"

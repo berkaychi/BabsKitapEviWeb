@@ -42,7 +42,7 @@ export const clientRoutes: Routes = [
           ).then((m) => m.BookListComponent),
       },
       {
-        path: 'book/:id',
+        path: 'book/:slug',
         loadComponent: () =>
           import(
             '../client/features/books/components/book-detail/book-detail.component'
@@ -78,12 +78,98 @@ export const clientRoutes: Routes = [
           ).then((m) => m.CartViewComponent),
       },
       {
-        path: 'profile',
+        path: 'checkout',
         canActivate: [authGuard],
         loadComponent: () =>
-          import('../client/features/profile/profile.component').then(
-            (m) => m.ProfileComponent
+          import('../client/features/checkout/checkout.component').then(
+            (m) => m.CheckoutComponent
           ),
+      },
+      {
+        path: 'orders',
+        canActivate: [authGuard],
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import(
+                './features/orders/components/order-list/order-list.component'
+              ).then((m) => m.OrderListComponent),
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import(
+                './features/orders/components/order-detail/order-detail.component'
+              ).then((m) => m.OrderDetailComponent),
+          },
+        ],
+      },
+      {
+        path: 'profile',
+        canActivate: [authGuard],
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('../client/features/profile/profile.component').then(
+                (m) => m.ProfileComponent
+              ),
+          },
+          {
+            path: 'addresses',
+            children: [
+              {
+                path: '',
+                loadComponent: () =>
+                  import(
+                    '../client/features/profile/components/address-list/address-list.component'
+                  ).then((m) => m.AddressListComponent),
+              },
+              {
+                path: 'new',
+                loadComponent: () =>
+                  import(
+                    '../client/features/profile/components/address-form/address-form.component'
+                  ).then((m) => m.AddressFormComponent),
+              },
+              {
+                path: ':id/edit',
+                loadComponent: () =>
+                  import(
+                    '../client/features/profile/components/address-form/address-form.component'
+                  ).then((m) => m.AddressFormComponent),
+              },
+            ],
+          },
+        ],
+      },
+      {
+        path: 'addresses',
+        canActivate: [authGuard],
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import(
+                '../client/features/profile/components/address-list/address-list.component'
+              ).then((m) => m.AddressListComponent),
+          },
+          {
+            path: 'new',
+            loadComponent: () =>
+              import(
+                '../client/features/profile/components/address-form/address-form.component'
+              ).then((m) => m.AddressFormComponent),
+          },
+          {
+            path: ':id/edit',
+            loadComponent: () =>
+              import(
+                '../client/features/profile/components/address-form/address-form.component'
+              ).then((m) => m.AddressFormComponent),
+          },
+        ],
       },
       {
         path: 'publishers',

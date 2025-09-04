@@ -33,19 +33,19 @@ export class BookDetailComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    if (!id) {
-      this.error = 'Geçersiz kitap kimliği';
+    const slug = this.route.snapshot.paramMap.get('slug');
+    if (!slug) {
+      this.error = 'Geçersiz kitap bağlantısı';
       return;
     }
-    this.fetchBook(id);
+    this.fetchBook(slug);
   }
 
-  private fetchBook(id: number): void {
+  private fetchBook(slug: string): void {
     this.loading = true;
     this.error = null;
 
-    const bookSub = this.bookService.getBookById(id).subscribe({
+    const bookSub = this.bookService.getBookBySlug(slug).subscribe({
       next: (book) => {
         this.book = book;
         this.loading = false;

@@ -7,7 +7,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { User } from '../../../../core/models/user.model';
 import {
   AdminUserService,
   UpdateUserRoleRequest,
@@ -84,24 +83,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (response) => {
-          let userData: any = null;
-
-          if (
-            response &&
-            typeof response === 'object' &&
-            'success' in response
-          ) {
-            if (response.success) {
-              userData = response.data;
-            } else {
-              this.error =
-                response.message || 'Kullanıcı bilgileri yüklenemedi.';
-              this.goBack();
-              return;
-            }
-          } else {
-            userData = response;
-          }
+          const userData = response;
 
           if (userData) {
             this.userForm.patchValue({
@@ -137,20 +119,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (response) => {
-          if (
-            response &&
-            typeof response === 'object' &&
-            'success' in response
-          ) {
-            if (response.success) {
-              alert('Kullanıcı bilgileri başarıyla güncellendi.');
-            } else {
-              this.error =
-                response.message || 'Kullanıcı bilgileri güncellenemedi.';
-            }
-          } else {
-            alert('Kullanıcı bilgileri başarıyla güncellendi.');
-          }
+          alert('Kullanıcı bilgileri başarıyla güncellendi.');
         },
         error: (err) => {
           console.error('User update error:', err);
@@ -174,19 +143,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (response) => {
-          if (
-            response &&
-            typeof response === 'object' &&
-            'success' in response
-          ) {
-            if (response.success) {
-              alert('Kullanıcı rolü başarıyla güncellendi.');
-            } else {
-              this.error = response.message || 'Kullanıcı rolü güncellenemedi.';
-            }
-          } else {
-            alert('Kullanıcı rolü başarıyla güncellendi.');
-          }
+          alert('Kullanıcı rolü başarıyla güncellendi.');
         },
         error: (err) => {
           console.error('User role update error:', err);

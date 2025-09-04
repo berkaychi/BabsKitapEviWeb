@@ -1,0 +1,11 @@
+<!-- Order Summary Component -->
+<div class="summary-info mb-3" *ngIf="!loading">
+  <span class="text-muted"> Toplam {{ totalCount }} sipariş bulundu </span>
+</div>
+
+<!-- Loading State -->
+<div *ngIf="loading" class="text-center py-4">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Yükleniyor...</span>
+  </div>
+</div>

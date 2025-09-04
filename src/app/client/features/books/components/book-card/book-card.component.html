@@ -1,4 +1,4 @@
-<a class="text-decoration-none text-reset" [routerLink]="['/book', book.id]">
+<a class="text-decoration-none text-reset" [routerLink]="['/book', book.slug]">
   <div class="book-card card h-100">
     <img
       class="card-img-top object-fit-cover"
@@ -25,7 +25,7 @@
         <div class="btn-group">
           <a
             class="btn btn-sm btn-outline-secondary"
-            [routerLink]="['/book', book.id]"
+            [routerLink]="['/book', book.slug]"
             (click)="$event.stopPropagation()"
           >
             <i class="bi bi-eye"></i>

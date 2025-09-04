@@ -9,7 +9,7 @@ export interface Cart {
   id: number;
   userId: string;
   items: CartItem[];
-  totalPrice: number;
+  // totalPrice: number;
   updatedAt?: string;
 }
 

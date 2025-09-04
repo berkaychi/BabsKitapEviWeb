@@ -1,0 +1,233 @@
+<div class="checkout-container">
+  <div class="checkout-header">
+    <button (click)="goBack()" class="back-button">
+      <i class="fas fa-arrow-left"></i> Sepete Dön
+    </button>
+    <h1>Ödeme</h1>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <div *ngIf="cart && addresses.length > 0" class="checkout-content">
+    <form
+      [formGroup]="checkoutForm"
+      (ngSubmit)="onSubmit()"
+      class="checkout-form"
+    >
+      <!-- Shipping Address Section -->
+      <div class="section">
+        <h2><i class="fas fa-map-marker-alt"></i> Teslimat Adresi</h2>
+        <div class="address-selection">
+          <div
+            *ngFor="let address of addresses"
+            class="address-card"
+            [class.selected]="selectedAddressId === address.id"
+            (click)="onAddressSelect(address.id)"
+          >
+            <div class="address-header">
+              <input
+                type="radio"
+                [value]="address.id"
+                formControlName="selectedAddress"
+                [checked]="selectedAddressId === address.id"
+              />
+              <strong>{{ address.addressName }}</strong>
+            </div>
+            <div class="address-details">
+              <p>{{ address.fullName }}</p>
+              <p>{{ address.streetAddress }}</p>
+              <p>
+                {{ address.city }}, {{ address.country }} {{ address.zipCode }}
+              </p>
+              <p *ngIf="address.phoneNumber">Tel: {{ address.phoneNumber }}</p>
+            </div>
+          </div>
+          <button
+            type="button"
+            (click)="goToAddresses()"
+            class="add-address-btn"
+          >
+            <i class="fas fa-plus"></i> Yeni Adres Ekle
+          </button>
+        </div>
+      </div>
+
+      <!-- Payment Method Section -->
+      <div class="section">
+        <h2><i class="fas fa-credit-card"></i> Ödeme Yöntemi</h2>
+        <div class="payment-methods">
+          <div
+            *ngFor="let method of paymentMethods"
+            class="payment-method"
+            [class.selected]="
+              checkoutForm.get('paymentMethod')?.value === method.id
+            "
+          >
+            <input
+              type="radio"
+              [value]="method.id"
+              formControlName="paymentMethod"
+              [id]="method.id"
+            />
+            <label [for]="method.id">
+              <i [class]="method.icon"></i>
+              {{ method.name }}
+            </label>
+          </div>
+        </div>
+
+        <!-- Credit Card Form -->
+        <div
+          *ngIf="checkoutForm.get('paymentMethod')?.value === 'credit-card'"
+          class="card-form"
+        >
+          <div class="form-row">
+            <div class="form-group">
+              <label>Kart Numarası</label>
+              <input
+                type="text"
+                formControlName="cardNumber"
+                placeholder="1234 5678 9012 3456"
+                maxlength="16"
+              />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Kart Sahibinin Adı</label>
+              <input
+                type="text"
+                formControlName="cardHolder"
+                placeholder="John Doe"
+              />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Ay</label>
+              <select formControlName="expiryMonth">
+                <option value="">Ay</option>
+                <option
+                  *ngFor="let month of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]"
+                  [value]="month"
+                >
+                  {{ month.toString().padStart(2, "0") }}
+                </option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Yıl</label>
+              <select formControlName="expiryYear">
+                <option value="">Yıl</option>
+                <option
+                  *ngFor="
+                    let year of [
+                      2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032,
+                      2033, 2034, 2035
+                    ]
+                  "
+                  [value]="year"
+                >
+                  {{ year }}
+                </option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>CVV</label>
+              <input
+                type="text"
+                formControlName="cvv"
+                placeholder="123"
+                maxlength="3"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Summary Section -->
+      <div class="section">
+        <h2><i class="fas fa-receipt"></i> Sipariş Özeti</h2>
+        <div class="order-summary">
+          <div *ngFor="let item of cart.items" class="order-item">
+            <div class="item-image">
+              <img
+                [src]="getBookImage(item.bookId)"
+                [alt]="item.bookTitle"
+                class="book-image"
+                onerror="this.src='https://via.placeholder.com/80x100?text=No+Image'"
+              />
+            </div>
+            <div class="item-details">
+              <h4>{{ item.bookTitle }}</h4>
+              <p>Adet: {{ item.quantity }}</p>
+            </div>
+            <div class="item-price">
+              {{
+                item.price * item.quantity
+                  | currency : "TRY" : "symbol" : "1.2-2"
+              }}
+            </div>
+          </div>
+
+          <div class="summary-totals">
+            <div class="total-row">
+              <span>Ara Toplam:</span>
+              <span>{{
+                getTotalAmount() | currency : "TRY" : "symbol" : "1.2-2"
+              }}</span>
+            </div>
+            <div class="total-row">
+              <span>Kargo:</span>
+              <span>
+                <span *ngIf="getShippingCost() === 0" class="free-shipping"
+                  >Ücretsiz</span
+                >
+                <span *ngIf="getShippingCost() > 0">{{
+                  getShippingCost() | currency : "TRY" : "symbol" : "1.2-2"
+                }}</span>
+              </span>
+            </div>
+            <div class="total-row final-total">
+              <span>Toplam:</span>
+              <span>{{
+                getFinalTotal() | currency : "TRY" : "symbol" : "1.2-2"
+              }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Terms and Submit -->
+      <div class="section">
+        <div class="terms-checkbox">
+          <input type="checkbox" formControlName="agreeTerms" id="agreeTerms" />
+          <label for="agreeTerms">
+            Satış sözleşmesini ve kullanım koşullarını kabul ediyorum.
+          </label>
+        </div>
+
+        <button
+          type="submit"
+          class="submit-btn"
+          [disabled]="checkoutForm.invalid || loading"
+        >
+          <i class="fas fa-credit-card"></i>
+          <span *ngIf="!loading">Siparişi Tamamla</span>
+          <span *ngIf="loading">Hazırlanıyor...</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div *ngIf="!cart || cart.items.length === 0" class="empty-cart">
+    <i class="fas fa-shopping-cart"></i>
+    <h2>Sepetiniz Boş</h2>
+    <p>Sipariş vermek için önce sepetinize ürün eklemelisiniz.</p>
+    <button (click)="goToBooks()" class="browse-books-btn">
+      Kitaplara Göz At
+    </button>
+  </div>
+</div>

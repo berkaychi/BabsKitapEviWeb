@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { CartService } from '../../../../../core/services/cart.service';
 import { Cart } from '../../../../../core/models/cart.model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from '../../../../../shared/components/modals/confirm-dialog/confirm-dialog.component';
 import { BookService } from '../../../../../core/services/book.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-cart-view',
@@ -25,7 +25,8 @@ export class CartViewComponent implements OnInit {
   constructor(
     private cartService: CartService,
     private modal: NgbModal,
-    private bookService: BookService
+    private bookService: BookService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -123,5 +124,11 @@ export class CartViewComponent implements OnInit {
 
   isInCart(bookId: number): boolean {
     return this.cart?.items.some((i) => i.bookId === bookId) ?? false;
+  }
+
+  goToCheckout(): void {
+    if (this.cart && this.cart.items.length > 0) {
+      this.router.navigate(['/checkout']);
+    }
   }
 }

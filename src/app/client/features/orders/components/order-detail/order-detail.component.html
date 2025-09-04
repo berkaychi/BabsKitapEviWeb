@@ -1,0 +1,153 @@
+<div class="order-detail-container">
+  <div class="order-header">
+    <button (click)="goBackToOrders()" class="back-button">
+      <i class="fas fa-arrow-left"></i> Siparişlerime Dön
+    </button>
+    <div class="header-content">
+      <h1 *ngIf="order">Sipariş #{{ order.id }}</h1>
+      <div *ngIf="order" class="order-meta">
+        <span class="order-date">{{ formatDate(order.orderDate) }}</span>
+        <span
+          class="status-badge"
+          [style.background-color]="getStatusInfo(order.status).color"
+        >
+          {{ getStatusInfo(order.status).label }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+    <button (click)="loadOrderDetail()" class="retry-btn">
+      <i class="fas fa-redo"></i> Tekrar Dene
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading-message">
+    <i class="fas fa-spinner fa-spin"></i>
+    Sipariş detayı yükleniyor...
+  </div>
+
+  <div *ngIf="order && !loading" class="order-content">
+    <!-- Order Summary -->
+    <div class="section">
+      <h2><i class="fas fa-info-circle"></i> Sipariş Özeti</h2>
+      <div class="summary-grid">
+        <div class="summary-item">
+          <label>Sipariş Numarası:</label>
+          <span>#{{ order.id }}</span>
+        </div>
+        <div class="summary-item">
+          <label>Sipariş Tarihi:</label>
+          <span>{{ formatDate(order.orderDate) }}</span>
+        </div>
+        <div class="summary-item">
+          <label>Durum:</label>
+          <span
+            class="status-badge small"
+            [style.background-color]="getStatusInfo(order.status).color"
+          >
+            {{ getStatusInfo(order.status).label }}
+          </span>
+        </div>
+        <div class="summary-item">
+          <label>Toplam Tutar:</label>
+          <span class="total-amount">{{
+            order.totalAmount | currency : "TRY" : "symbol" : "1.2-2"
+          }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shipping Address -->
+    <div class="section">
+      <h2><i class="fas fa-map-marker-alt"></i> Teslimat Adresi</h2>
+      <div class="address-card">
+        <div class="address-details">
+          <h4>{{ order.shippingFullName }}</h4>
+          <p>{{ order.shippingAddress }}</p>
+          <p>{{ order.shippingCity }}, {{ order.shippingCountry }}</p>
+          <p>{{ order.shippingZipCode }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Items -->
+    <div class="section">
+      <h2><i class="fas fa-list"></i> Sipariş İçeriği</h2>
+      <div class="items-table">
+        <div class="table-header">
+          <div class="col-product">Ürün</div>
+          <div class="col-quantity">Adet</div>
+          <div class="col-price">Birim Fiyat</div>
+          <div class="col-total">Toplam</div>
+        </div>
+        <div *ngFor="let item of order.orderItems" class="table-row">
+          <div class="col-product">
+            <div class="product-info">
+              <div class="product-image">
+                <img
+                  [src]="getBookImage(item.bookId)"
+                  [alt]="item.bookTitle"
+                  class="book-image"
+                  onerror="this.src='https://via.placeholder.com/80x100?text=No+Image'"
+                />
+              </div>
+              <div class="product-details">
+                <h4>{{ item.bookTitle }}</h4>
+                <p>{{ item.bookAuthor }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-quantity">
+            {{ item.quantity }}
+          </div>
+          <div class="col-price">
+            {{ item.price | currency : "TRY" : "symbol" : "1.2-2" }}
+          </div>
+          <div class="col-total">
+            {{ item.totalPrice | currency : "TRY" : "symbol" : "1.2-2" }}
+          </div>
+        </div>
+        <div class="table-footer">
+          <div class="footer-content">
+            <div class="total-row">
+              <span>Ara Toplam:</span>
+              <span>{{
+                order.totalAmount | currency : "TRY" : "symbol" : "1.2-2"
+              }}</span>
+            </div>
+            <div class="total-row">
+              <span>Kargo:</span>
+              <span class="free-shipping">Ücretsiz</span>
+            </div>
+            <div class="total-row final-total">
+              <span>Genel Toplam:</span>
+              <strong>{{
+                order.totalAmount | currency : "TRY" : "symbol" : "1.2-2"
+              }}</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Actions -->
+    <div class="section">
+      <div class="order-actions">
+        <button (click)="printOrder()" class="print-btn">
+          <i class="fas fa-print"></i> Yazdır
+        </button>
+
+        <button
+          *ngIf="canCancelOrder()"
+          (click)="cancelOrder()"
+          class="cancel-btn"
+        >
+          <i class="fas fa-times"></i> Siparişi İptal Et
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

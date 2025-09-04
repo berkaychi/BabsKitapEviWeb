@@ -40,19 +40,7 @@ export class UserListComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (response) => {
-          if (
-            response &&
-            typeof response === 'object' &&
-            'success' in response
-          ) {
-            if (response.success) {
-              this.users = response.data || [];
-            } else {
-              this.error = response.message || 'Kullanıcılar yüklenemedi.';
-            }
-          } else {
-            this.users = Array.isArray(response) ? response : [];
-          }
+          this.users = response;
         },
         error: (err) => {
           console.error('Users loading error:', err);
@@ -69,12 +57,8 @@ export class UserListComponent implements OnInit, OnDestroy {
     ) {
       this.adminUserService.deleteUser(user.id).subscribe({
         next: (response) => {
-          if (response.success) {
-            alert('Kullanıcı başarıyla silindi.');
-            this.loadUsers();
-          } else {
-            alert(response.message || 'Kullanıcı silinirken bir hata oluştu.');
-          }
+          alert('Kullanıcı başarıyla silindi.');
+          this.loadUsers();
         },
         error: (err) => {
           console.error('User deletion error:', err);
