@@ -102,6 +102,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     return 'Kullanıcı';
   }
 
+  canAccessAdmin(): boolean {
+    return this.authService.canAccessAdmin();
+  }
+
   onSearch(): void {
     this.filterService.updateSearchTerm(this.searchQuery || '');
     if (!this.router.url.startsWith('/books')) {

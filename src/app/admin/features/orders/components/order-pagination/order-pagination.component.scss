@@ -1,0 +1,32 @@
+.pagination {
+  .page-link {
+    color: #6b7280;
+    border: 1px solid #d1d5db;
+    padding: 8px 12px;
+
+    &:hover {
+      background-color: #f3f4f6;
+      border-color: #9ca3af;
+    }
+  }
+
+  .page-item.active .page-link {
+    background-color: #3b82f6;
+    border-color: #3b82f6;
+  }
+
+  .page-item.disabled .page-link {
+    color: #9ca3af;
+    background-color: #f9fafb;
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .pagination {
+    .page-link {
+      padding: 6px 8px;
+      font-size: 13px;
+    }
+  }
+}

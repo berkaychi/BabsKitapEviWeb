@@ -1,0 +1,125 @@
+<div class="card">
+  <div class="card-header">
+    <h5>Sipariş Arama ve Filtreleme</h5>
+  </div>
+  <div class="card-body">
+    <!-- Search and Filters -->
+    <div class="row mb-3">
+      <div class="col-md-3">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Arama terimi..."
+          [value]="filterState?.searchTerm || ''"
+          (input)="onSearchTermChange($event)"
+        />
+      </div>
+      <div class="col-md-2">
+        <select
+          class="form-control"
+          [value]="filterState?.status || ''"
+          (change)="onStatusChange($event)"
+        >
+          <option value="">Tüm Durumlar</option>
+          <option
+            *ngFor="let status of filterOptions?.statusOptions"
+            [value]="status.value"
+          >
+            {{ status.label }}
+          </option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <input
+          type="date"
+          class="form-control"
+          placeholder="Başlangıç tarihi"
+          [value]="filterState?.startDate || ''"
+          (change)="onStartDateChange($event)"
+        />
+      </div>
+      <div class="col-md-2">
+        <input
+          type="date"
+          class="form-control"
+          placeholder="Bitiş tarihi"
+          [value]="filterState?.endDate || ''"
+          (change)="onEndDateChange($event)"
+        />
+      </div>
+      <div class="col-md-3">
+        <button
+          class="btn btn-outline-secondary me-2"
+          (click)="onClearFilters()"
+        >
+          Filtreleri Temizle
+        </button>
+        <button class="btn btn-primary" (click)="refreshOrders()">Ara</button>
+      </div>
+    </div>
+
+    <!-- Results Summary -->
+    <div class="mb-3" *ngIf="pagedResponse">
+      <small class="text-muted">
+        Toplam {{ pagedResponse.totalCount }} sipariş bulundu (Sayfa {{
+        pagedResponse.pageNumber }} / {{ pagedResponse.totalPages }})
+      </small>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="text-center py-4">
+      <div class="spinner-border spinner-border-sm" role="status">
+        <span class="visually-hidden">Yükleniyor...</span>
+      </div>
+      <span class="ms-2">Siparişler yükleniyor...</span>
+    </div>
+
+    <!-- Orders Table -->
+    <div class="table-responsive" *ngIf="!loading && orders.length > 0">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Sipariş ID</th>
+            <th>Tarih</th>
+            <th>Müşteri</th>
+            <th>Toplam</th>
+            <th>Durum</th>
+            <th>İşlemler</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of orders">
+            <td>{{ order.id }}</td>
+            <td>{{ formatDate(order.orderDate) }}</td>
+            <td>{{ order.shippingFullName }}</td>
+            <td>
+              {{ order.totalAmount | currency : 'TRY' : 'symbol' : '1.2-2' :
+              'tr' }}
+            </td>
+            <td>
+              <span [class]="'badge ' + getStatusBadgeClass(order.status)">
+                {{ getOrderStatusInfo(order.status).label }}
+              </span>
+            </td>
+            <td>
+              <button
+                class="btn btn-sm btn-outline-primary"
+                (click)="viewOrder(order.id)"
+              >
+                Görüntüle
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- No Results -->
+    <div *ngIf="!loading && orders.length === 0" class="text-center py-4">
+      <p class="text-muted">Sipariş bulunamadı.</p>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+  </div>
+</div>

@@ -1,0 +1,56 @@
+:root {
+  --admin-sidebar-width: 260px;
+  --admin-sidebar-collapsed-width: 64px;
+  --admin-header-height: 64px;
+  --admin-primary: #2563eb;
+  --admin-dark: #1e293b;
+}
+
+.admin-layout {
+  min-height: 100vh;
+  background: #f8fafc;
+
+  &__body {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  &__content {
+    flex: 1;
+    margin-left: var(--admin-sidebar-width);
+    min-height: 100vh;
+    transition: margin-left 0.3s ease;
+    background: #f8fafc;
+
+    &.expanded {
+      margin-left: var(--admin-sidebar-collapsed-width);
+    }
+
+    > app-admin-header {
+      display: block;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: #fff;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    > main {
+      padding: 16px 20px;
+      min-height: calc(100vh - var(--admin-header-height));
+    }
+  }
+}
+
+@media (max-width: 992px) {
+  .admin-layout__content {
+    margin-left: var(--admin-sidebar-collapsed-width);
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-layout__content {
+    margin-left: 0;
+  }
+}
+

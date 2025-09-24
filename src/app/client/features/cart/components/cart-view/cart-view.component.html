@@ -1,0 +1,137 @@
+<div class="container py-5 cart-page">
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h1 class="h3 mb-1">Sepetim</h1>
+      <p class="text-muted mb-0">Seçtiğiniz ürünleri gözden geçirin</p>
+    </div>
+    <a class="btn btn-outline-primary" [routerLink]="['/books']">
+      <i class="bi bi-arrow-left me-1"></i> Alışverişe Devam Et
+    </a>
+  </div>
+
+  <div *ngIf="loading" class="alert alert-info">Yükleniyor...</div>
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+  <ng-container *ngIf="!loading && !error">
+    <div
+      *ngIf="!cart || cart.items.length === 0"
+      class="empty-state card p-4 text-center"
+    >
+      <div class="mb-3"><i class="bi bi-bag-x fs-1 text-muted"></i></div>
+      <h5 class="mb-2">Sepetiniz boş</h5>
+      <p class="text-muted mb-3">Hadi birkaç kitap ekleyelim!</p>
+      <a class="btn btn-primary" [routerLink]="['/books']">Kitapları Keşfet</a>
+    </div>
+
+    <div *ngIf="cart && cart.items.length > 0" class="row g-4">
+      <!-- Items -->
+      <div class="col-lg-8">
+        <div class="card p-0">
+          <div class="table-responsive">
+            <table class="table align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>Ürün</th>
+                  <th class="text-center" style="width: 180px">Adet</th>
+                  <th class="text-end" style="width: 140px">Fiyat</th>
+                  <th class="text-end" style="width: 140px">Ara Toplam</th>
+                  <th class="text-end" style="width: 80px"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of cart.items">
+                  <td>
+                    <div class="d-flex align-items-center gap-3">
+                      <img
+                        [src]="
+                          imageCache[item.bookId] ||
+                          'https://via.placeholder.com/56x72?text=No+Image'
+                        "
+                        alt="{{ item.bookTitle }}"
+                        class="rounded shadow-sm cart-item-thumb"
+                        width="56"
+                        height="72"
+                      />
+                      <div class="fw-semibold">{{ item.bookTitle }}</div>
+                    </div>
+                  </td>
+                  <td>
+                    <div
+                      class="d-flex justify-content-center align-items-center gap-2"
+                    >
+                      <button
+                        class="btn btn-sm btn-outline-secondary"
+                        (click)="decrease(item.bookId)"
+                      >
+                        <i class="bi bi-dash"></i>
+                      </button>
+                      <span class="min-w-2ch text-center">{{
+                        item.quantity
+                      }}</span>
+                      <button
+                        class="btn btn-sm btn-outline-secondary"
+                        (click)="increase(item.bookId)"
+                      >
+                        <i class="bi bi-plus"></i>
+                      </button>
+                    </div>
+                  </td>
+                  <td class="text-end">
+                    {{ item.price | currency : "TRY" : "symbol" : "1.2-2" }}
+                  </td>
+                  <td class="text-end">
+                    {{
+                      item.price * item.quantity
+                        | currency : "TRY" : "symbol" : "1.2-2"
+                    }}
+                  </td>
+                  <td class="text-end">
+                    <button
+                      class="btn btn-sm btn-outline-danger"
+                      (click)="remove(item.bookId)"
+                    >
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="col-lg-4">
+        <div class="card p-3">
+          <h6 class="mb-3">Sipariş Özeti</h6>
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <span class="text-muted">Ara Toplam</span>
+            <span class="fw-semibold">{{
+              subtotal | currency : "TRY" : "symbol" : "1.2-2"
+            }}</span>
+          </div>
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <span class="text-muted">Kargo</span>
+            <span class="fw-semibold">—</span>
+          </div>
+          <hr />
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <span class="fw-semibold">Genel Toplam</span>
+            <span class="fw-bold">{{
+              subtotal | currency : "TRY" : "symbol" : "1.2-2"
+            }}</span>
+          </div>
+          <button
+            class="btn btn-primary w-100"
+            type="button"
+            (click)="goToCheckout()"
+            [disabled]="!cart || !cart.items.length"
+          >
+            <i class="fas fa-credit-card me-2"></i>
+            Ödemeye Geç
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

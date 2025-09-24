@@ -5,10 +5,16 @@ export interface BookCategory {
   name: string;
 }
 
+export interface BookPublisher {
+  id: number;
+  name: string;
+}
+
 export interface Book {
   id: number;
   title: string;
   author: string;
+  slug: string;
   isbn: string;
   publishedDate: string;
   description: string;
@@ -16,7 +22,7 @@ export interface Book {
   stockQuantity: number;
   price: number;
   categories: BookCategory[];
-  publishers: Publisher[];
+  publishers: BookPublisher[];
 }
 
 export interface ApiListResponse<T> {
@@ -70,4 +76,29 @@ export enum BookSortBy {
 export enum SortDirection {
   ASC = 'ASC',
   DESC = 'DESC',
+}
+
+export interface CreateBookRequest {
+  title: string;
+  author: string;
+  isbn: string;
+  publishedDate: string;
+  description?: string;
+  stockQuantity: number;
+  price: number;
+  categoryIds?: number[];
+  publisherIds?: number[];
+  imageFile?: File;
+}
+
+export interface UpdateBookRequest {
+  title?: string;
+  author?: string;
+  isbn?: string;
+  publishedDate?: string;
+  description?: string;
+  stockQuantity?: number;
+  price?: number;
+  categoryIds?: number[];
+  publisherIds?: number[];
 }

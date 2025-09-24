@@ -1,0 +1,123 @@
+<div class="admin-book-list">
+  <div class="header">
+    <h2>Kitap Yönetimi</h2>
+    <button class="btn btn-primary" routerLink="/admin/books/new">
+      <i class="bi bi-plus-lg me-2"></i>Yeni Kitap Ekle
+    </button>
+  </div>
+
+  <div class="search-section">
+    <input
+      type="text"
+      placeholder="Kitap başlığı, yazar veya ISBN ile ara..."
+      [(ngModel)]="searchTerm"
+      (input)="onSearch()"
+      class="form-control"
+    />
+  </div>
+
+  <div class="table-responsive" *ngIf="!loading && books.length > 0">
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr>
+          <th>Resim</th>
+          <th>Başlık</th>
+          <th>Yazar</th>
+          <th>ISBN</th>
+          <th>Fiyat</th>
+          <th>Stok</th>
+          <th class="text-end">İşlemler</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let book of books">
+          <td>
+            <a [routerLink]="['/admin/books/edit', book.id]">
+              <img
+                [src]="book.imageUrl"
+                [alt]="book.title"
+                class="book-thumbnail"
+              />
+            </a>
+          </td>
+          <td>
+            <a
+              [routerLink]="['/admin/books/edit', book.id]"
+              class="text-decoration-none"
+              >{{ book.title }}</a
+            >
+          </td>
+          <td>{{ book.author }}</td>
+          <td>{{ book.isbn }}</td>
+          <td>{{ book.price | currency : "TRY" : "symbol" : "1.2-2" }}</td>
+          <td>
+            <span [class]="getStockClass(book.stockQuantity)">
+              {{ book.stockQuantity }}
+            </span>
+          </td>
+          <td class="text-end">
+            <div class="btn-group">
+              <button
+                class="btn btn-sm btn-outline-primary"
+                [routerLink]="['/admin/books/edit', book.id]"
+                title="Düzenle"
+              >
+                <i class="bi bi-pencil-fill"></i>
+              </button>
+              <button
+                class="btn btn-sm btn-outline-danger"
+                (click)="deleteBook(book)"
+                title="Sil"
+              >
+                <i class="bi bi-trash-fill"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="alert alert-info" *ngIf="!loading && books.length === 0">
+    Gösterilecek kitap bulunamadı.
+  </div>
+
+  <div class="text-center my-5" *ngIf="loading">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Yükleniyor...</span>
+    </div>
+  </div>
+
+  <nav class="pagination-container" *ngIf="!loading && totalPages > 1">
+    <ul class="pagination justify-content-center">
+      <li class="page-item" [class.disabled]="currentPage === 1">
+        <a
+          class="page-link"
+          href="javascript:void(0)"
+          (click)="changePage(currentPage - 1)"
+          >Önceki</a
+        >
+      </li>
+      <li
+        class="page-item"
+        *ngFor="let page of [].constructor(totalPages); let i = index"
+        [class.active]="currentPage === i + 1"
+      >
+        <a
+          class="page-link"
+          href="javascript:void(0)"
+          (click)="changePage(i + 1)"
+          >{{ i + 1 }}</a
+        >
+      </li>
+      <li class="page-item" [class.disabled]="currentPage === totalPages">
+        <a
+          class="page-link"
+          href="javascript:void(0)"
+          (click)="changePage(currentPage + 1)"
+          >Sonraki</a
+        >
+      </li>
+    </ul>
+  </nav>
+</div>

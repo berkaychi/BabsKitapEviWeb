@@ -1,0 +1,194 @@
+<div class="user-form-container">
+  <div class="header">
+    <h2>{{ isEditMode ? "Kullanıcı Düzenle" : "Yeni Kullanıcı" }}</h2>
+    <button type="button" class="btn btn-secondary" (click)="goBack()">
+      <i class="bi bi-arrow-left"></i>
+      Geri
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Yükleniyor...</span>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="alert alert-danger" role="alert">
+    <i class="bi bi-exclamation-triangle"></i>
+    {{ error }}
+  </div>
+
+  <!-- Forms -->
+  <div *ngIf="!loading" class="forms-container">
+    <!-- User Information Form -->
+    <div class="form-card">
+      <div class="card-header">
+        <h5>Kullanıcı Bilgileri</h5>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="userForm" (ngSubmit)="onUserSubmit()">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="firstName" class="form-label">Ad *</label>
+                <input
+                  type="text"
+                  id="firstName"
+                  formControlName="firstName"
+                  class="form-control"
+                  [class.is-invalid]="
+                    userForm.get('firstName')?.invalid &&
+                    userForm.get('firstName')?.touched
+                  "
+                />
+                <div
+                  class="invalid-feedback"
+                  *ngIf="
+                    userForm.get('firstName')?.invalid &&
+                    userForm.get('firstName')?.touched
+                  "
+                >
+                  <div *ngIf="userForm.get('firstName')?.errors?.['required']">
+                    Ad alanı zorunludur.
+                  </div>
+                  <div *ngIf="userForm.get('firstName')?.errors?.['minlength']">
+                    Ad en az 2 karakter olmalıdır.
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="lastName" class="form-label">Soyad *</label>
+                <input
+                  type="text"
+                  id="lastName"
+                  formControlName="lastName"
+                  class="form-control"
+                  [class.is-invalid]="
+                    userForm.get('lastName')?.invalid &&
+                    userForm.get('lastName')?.touched
+                  "
+                />
+                <div
+                  class="invalid-feedback"
+                  *ngIf="
+                    userForm.get('lastName')?.invalid &&
+                    userForm.get('lastName')?.touched
+                  "
+                >
+                  <div *ngIf="userForm.get('lastName')?.errors?.['required']">
+                    Soyad alanı zorunludur.
+                  </div>
+                  <div *ngIf="userForm.get('lastName')?.errors?.['minlength']">
+                    Soyad en az 2 karakter olmalıdır.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="email" class="form-label">E-posta *</label>
+            <input
+              type="email"
+              id="email"
+              formControlName="email"
+              class="form-control"
+              [class.is-invalid]="
+                userForm.get('email')?.invalid && userForm.get('email')?.touched
+              "
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                userForm.get('email')?.invalid && userForm.get('email')?.touched
+              "
+            >
+              <div *ngIf="userForm.get('email')?.errors?.['required']">
+                E-posta alanı zorunludur.
+              </div>
+              <div *ngIf="userForm.get('email')?.errors?.['email']">
+                Geçerli bir e-posta adresi giriniz.
+              </div>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="userForm.invalid || submitting"
+            >
+              <span
+                *ngIf="submitting"
+                class="spinner-border spinner-border-sm me-2"
+              ></span>
+              <i class="bi bi-check2 me-1"></i>
+              Bilgileri Güncelle
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- User Role Form -->
+    <div class="form-card" *ngIf="isEditMode">
+      <div class="card-header">
+        <h5>Rol Yönetimi</h5>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="roleForm" (ngSubmit)="onRoleSubmit()">
+          <div class="form-group">
+            <label for="role" class="form-label">Kullanıcı Rolü *</label>
+            <div class="role-options">
+              <div
+                *ngFor="let roleOption of getRoleOptions()"
+                class="form-check"
+              >
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  [id]="'role-' + roleOption.value"
+                  formControlName="role"
+                  [value]="roleOption.value"
+                  [disabled]="submitting"
+                />
+                <label
+                  class="form-check-label"
+                  [for]="'role-' + roleOption.value"
+                >
+                  {{ roleOption.label }}
+                </label>
+              </div>
+            </div>
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                roleForm.get('role')?.invalid && roleForm.get('role')?.touched
+              "
+            >
+              <div *ngIf="roleForm.get('role')?.errors?.['required']">
+                Rol seçimi zorunludur.
+              </div>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button
+              type="submit"
+              class="btn btn-warning"
+              [disabled]="roleForm.invalid || submitting"
+            >
+              <span
+                *ngIf="submitting"
+                class="spinner-border spinner-border-sm me-2"
+              ></span>
+              <i class="bi bi-shield-check me-1"></i>
+              Rolü Güncelle
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

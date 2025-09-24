@@ -1,0 +1,32 @@
+<!-- Order Pagination Component -->
+<nav *ngIf="totalPages > 1" aria-label="Orders pagination" class="mt-4">
+  <ul class="pagination justify-content-center">
+    <li class="page-item" [class.disabled]="!hasPreviousPage">
+      <button
+        class="page-link"
+        (click)="onPageChange(currentPage - 1)"
+        [disabled]="!hasPreviousPage"
+      >
+        Önceki
+      </button>
+    </li>
+    <li
+      *ngFor="let page of visiblePages"
+      class="page-item"
+      [class.active]="currentPage === page"
+    >
+      <button class="page-link" (click)="onPageChange(page)">
+        {{ page }}
+      </button>
+    </li>
+    <li class="page-item" [class.disabled]="!hasNextPage">
+      <button
+        class="page-link"
+        (click)="onPageChange(currentPage + 1)"
+        [disabled]="!hasNextPage"
+      >
+        Sonraki
+      </button>
+    </li>
+  </ul>
+</nav>

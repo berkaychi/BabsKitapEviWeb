@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, tap } from 'rxjs';
+import { BehaviorSubject, tap, map, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   Cart,
   AddCartItemRequest,
   UpdateCartItemRequest,
 } from '../models/cart.model';
+import { ApiResponse } from '../models/api-response.model';
 
 @Injectable({
   providedIn: 'root',
@@ -20,37 +21,67 @@ export class CartService {
   constructor(private http: HttpClient) {}
 
   fetchCart() {
-    return this.http.get<Cart>(this.apiUrl).pipe(
-      tap((cart) => {
-        this.cartSubject.next(cart);
+    return this.http.get<ApiResponse<Cart>>(this.apiUrl).pipe(
+      map((response) => {
+        if (response.isSuccess && response.data) {
+          this.cartSubject.next(response.data);
+          return response.data;
+        }
+        throw new Error(
+          response.errors?.join(', ') || 'Sepet bilgileri alınamadı.'
+        );
       })
     );
   }
 
-  addItem(payload: AddCartItemRequest) {
-    return this.http.post<void>(`${this.apiUrl}/items`, payload).pipe(
-      tap(() => {
-        this.fetchCart().subscribe();
-      })
-    );
+  addItem(payload: AddCartItemRequest): Observable<void> {
+    return this.http
+      .post<ApiResponse<null>>(`${this.apiUrl}/items`, payload)
+      .pipe(
+        map((response) => {
+          if (response.isSuccess) {
+            this.fetchCart().subscribe();
+            return;
+          }
+          throw new Error(
+            response.errors?.join(', ') || 'Ürün sepete eklenemedi.'
+          );
+        })
+      );
   }
 
-  updateItem(bookId: number, payload: UpdateCartItemRequest) {
-    return this.http.put<void>(`${this.apiUrl}/items/${bookId}`, payload).pipe(
-      tap(() => {
-        this.fetchCart().subscribe();
-      })
-    );
+  updateItem(bookId: number, payload: UpdateCartItemRequest): Observable<void> {
+    return this.http
+      .put<ApiResponse<null>>(`${this.apiUrl}/items/${bookId}`, payload)
+      .pipe(
+        map((response) => {
+          if (response.isSuccess) {
+            this.fetchCart().subscribe();
+            return;
+          }
+          throw new Error(
+            response.errors?.join(', ') || 'Sepet güncellenemedi.'
+          );
+        })
+      );
   }
 
   removeAllItems() {}
 
-  removeItem(bookId: number) {
-    return this.http.delete<void>(`${this.apiUrl}/items/${bookId}`).pipe(
-      tap(() => {
-        this.fetchCart().subscribe();
-      })
-    );
+  removeItem(bookId: number): Observable<void> {
+    return this.http
+      .delete<ApiResponse<null>>(`${this.apiUrl}/items/${bookId}`)
+      .pipe(
+        map((response) => {
+          if (response.isSuccess) {
+            this.fetchCart().subscribe();
+            return;
+          }
+          throw new Error(
+            response.errors?.join(', ') || 'Ürün sepetten çıkarılamadı.'
+          );
+        })
+      );
   }
 
   getTotalQuantity(): number {

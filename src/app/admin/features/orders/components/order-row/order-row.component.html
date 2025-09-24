@@ -1,0 +1,84 @@
+<!-- Order ID Cell -->
+<td class="order-id-cell">
+  <div class="order-id">
+    <strong>#{{ order.id }}</strong>
+  </div>
+</td>
+
+<!-- Customer Info Cell -->
+<td class="customer-info-cell">
+  <div class="customer-info">
+    <div class="customer-name">{{ order.shippingFullName }}</div>
+    <div class="customer-address text-muted small">
+      {{ order.shippingCity }}, {{ order.shippingCountry }}
+    </div>
+  </div>
+</td>
+
+<!-- Order Items Cell -->
+<td class="order-items-cell">
+  <div class="order-items">
+    <div class="items-summary">{{ getTotalItemsCount(order) }} ürün</div>
+    <div class="items-preview">
+      <div
+        *ngFor="let item of order.orderItems.slice(0, 2)"
+        class="item-preview"
+      >
+        <img
+          [src]="getBookImage(item.bookId)"
+          [alt]="item.bookTitle"
+          class="item-image"
+          onerror="this.src='https://via.placeholder.com/40x50?text=No+Image'"
+        />
+        <div class="item-details">
+          <div class="item-title">{{ item.bookTitle }}</div>
+          <div class="item-quantity text-muted">{{ item.quantity }}x</div>
+        </div>
+      </div>
+      <div *ngIf="order.orderItems.length > 2" class="more-items text-muted">
+        +{{ order.orderItems.length - 2 }} daha...
+      </div>
+    </div>
+  </div>
+</td>
+
+<!-- Order Date Cell -->
+<td class="order-date-cell">
+  <div class="order-date">
+    {{ formatDate(order.orderDate) }}
+  </div>
+</td>
+
+<!-- Order Status Cell -->
+<td class="order-status-cell">
+  <div class="status-section">
+    <span
+      class="badge status-badge"
+      [style.background-color]="getOrderStatusInfo(order.status).color"
+    >
+      {{ getOrderStatusInfo(order.status).label }}
+    </span>
+  </div>
+</td>
+
+<!-- Order Amount Cell -->
+<td class="order-amount-cell">
+  <div class="order-amount">
+    <strong>
+      {{ order.totalAmount | currency : "TRY" : "symbol" : "1.2-2" }}
+    </strong>
+  </div>
+</td>
+
+<!-- Action Buttons Cell -->
+<td class="action-buttons-cell">
+  <div class="action-buttons">
+    <button
+      class="btn btn-sm btn-outline-primary"
+      (click)="viewOrderDetails(order.id)"
+      title="Detayları Görüntüle"
+    >
+      <i class="fas fa-eye"></i>
+    </button>
+  </div>
+</td>

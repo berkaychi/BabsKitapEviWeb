@@ -1,0 +1,116 @@
+<div class="orders-container">
+  <div class="orders-header">
+    <h1><i class="fas fa-shopping-bag"></i> Siparişlerim</h1>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+    <button (click)="loadOrders()" class="retry-btn">
+      <i class="fas fa-redo"></i> Tekrar Dene
+    </button>
+  </div>
+
+  <div *ngIf="!loading && orders.length === 0 && !error" class="empty-orders">
+    <i class="fas fa-shopping-bag"></i>
+    <h2>Henüz Siparişiniz Yok</h2>
+    <p>İlk siparişinizi vermek için kitaplara göz atın.</p>
+    <button (click)="goToBooks()" class="browse-books-btn">
+      <i class="fas fa-book"></i> Kitaplara Göz At
+    </button>
+  </div>
+
+  <div *ngIf="orders.length > 0" class="orders-list">
+    <div *ngFor="let order of orders" class="order-card">
+      <div class="order-header">
+        <div class="order-info">
+          <h3>Sipariş #{{ order.id }}</h3>
+          <p class="order-date">{{ formatDate(order.orderDate) }}</p>
+        </div>
+        <div class="order-status">
+          <span
+            class="status-badge"
+            [style.background-color]="getStatusInfo(order.status).color"
+          >
+            {{ getStatusInfo(order.status).label }}
+          </span>
+        </div>
+      </div>
+
+      <div class="order-content">
+        <div class="shipping-info">
+          <div class="shipping-address">
+            <h4><i class="fas fa-map-marker-alt"></i> Teslimat Adresi</h4>
+            <p>{{ order.shippingFullName }}</p>
+            <p>{{ order.shippingAddress }}</p>
+            <p>
+              {{ order.shippingCity }}, {{ order.shippingCountry }}
+              {{ order.shippingZipCode }}
+            </p>
+          </div>
+        </div>
+
+        <div class="order-items">
+          <h4>
+            <i class="fas fa-list"></i> Sipariş İçeriği ({{
+              order.orderItems.length
+            }}
+            ürün)
+          </h4>
+          <div class="items-list">
+            <div *ngFor="let item of order.orderItems" class="order-item">
+              <div class="item-image">
+                <img
+                  [src]="getBookImage(item.bookId)"
+                  [alt]="item.bookTitle"
+                  class="book-image"
+                  onerror="this.src='https://via.placeholder.com/60x80?text=No+Image'"
+                />
+              </div>
+              <div class="item-details">
+                <h5>{{ item.bookTitle }}</h5>
+                <p>{{ item.bookAuthor }}</p>
+                <p class="item-quantity">Adet: {{ item.quantity }}</p>
+              </div>
+              <div class="item-price">
+                <span class="unit-price">{{
+                  item.price | currency : "TRY" : "symbol" : "1.2-2"
+                }}</span>
+                <span class="total-price">{{
+                  item.totalPrice | currency : "TRY" : "symbol" : "1.2-2"
+                }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="order-total">
+          <div class="total-amount">
+            <span>Toplam Tutar:</span>
+            <strong>{{
+              order.totalAmount | currency : "TRY" : "symbol" : "1.2-2"
+            }}</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="order-actions">
+        <button (click)="viewOrderDetails(order.id)" class="details-btn">
+          <i class="fas fa-eye"></i> Detayları Görüntüle
+        </button>
+
+        <button
+          *ngIf="canCancelOrder(order)"
+          (click)="cancelOrder(order)"
+          class="cancel-btn"
+        >
+          <i class="fas fa-times"></i> Siparişi İptal Et
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-message">
+    <i class="fas fa-spinner fa-spin"></i>
+    Siparişler yükleniyor...
+  </div>
+</div>

@@ -1,0 +1,230 @@
+<div class="admin-order-detail">
+  <div class="page-header">
+    <div class="d-flex align-items-center">
+      <button
+        class="btn btn-outline-secondary me-3"
+        (click)="goBackToOrders()"
+        type="button"
+      >
+        <i class="fas fa-arrow-left"></i> Geri
+      </button>
+      <div>
+        <h1 class="page-title">Sipariş Detayı</h1>
+        <p class="page-subtitle" *ngIf="order">
+          Sipariş #{{ order.id }} - {{ formatDate(order.orderDate) }}
+        </p>
+      </div>
+    </div>
+    <div class="header-actions" *ngIf="order">
+      <div class="status-actions d-flex align-items-center gap-2">
+        <label class="form-label mb-0">Durum:</label>
+        <select
+          class="form-select form-select-sm"
+          [value]="selectedStatus || order.status"
+          (change)="onStatusChange($any($event.target).value)"
+          [disabled]="!canUpdateStatus() || isUpdatingStatus"
+          style="width: auto; min-width: 150px"
+        >
+          <option [value]="order.status">
+            {{ getOrderStatusInfo(order.status).label }} (Mevcut)
+          </option>
+          <option
+            *ngFor="let nextStatus of getNextStatusOptions(order.status)"
+            [value]="nextStatus"
+          >
+            {{ getOrderStatusInfo(nextStatus).label }}
+          </option>
+        </select>
+        <button
+          class="btn btn-primary btn-sm"
+          (click)="confirmStatusUpdate()"
+          [disabled]="!canConfirmStatusUpdate()"
+          [class.btn-loading]="isUpdatingStatus"
+        >
+          <i class="fas fa-check me-1" *ngIf="!isUpdatingStatus"></i>
+          <i class="fas fa-spinner fa-spin me-1" *ngIf="isUpdatingStatus"></i>
+          {{ isUpdatingStatus ? "Güncelleniyor..." : "Güncelle" }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Yükleniyor...</span>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error" class="alert alert-danger" role="alert">
+    {{ error }}
+  </div>
+
+  <!-- Order Details -->
+  <div *ngIf="!loading && !error && order" class="order-details">
+    <div class="row">
+      <!-- Order Info -->
+      <div class="col-md-8">
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-shopping-cart me-2"></i>
+              Sipariş Bilgileri
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="info-group">
+                  <label>Sipariş No:</label>
+                  <span class="order-id">#{{ order.id }}</span>
+                </div>
+                <div class="info-group">
+                  <label>Tarih:</label>
+                  <span>{{ formatDate(order.orderDate) }}</span>
+                </div>
+                <div class="info-group">
+                  <label>Durum:</label>
+                  <span
+                    class="badge status-badge"
+                    [style.background-color]="
+                      getOrderStatusInfo(order.status).color
+                    "
+                  >
+                    {{ getOrderStatusInfo(order.status).label }}
+                  </span>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="info-group">
+                  <label>Toplam Tutar:</label>
+                  <span class="total-amount">
+                    {{
+                      order.totalAmount | currency : "TRY" : "symbol" : "1.2-2"
+                    }}
+                  </span>
+                </div>
+                <div class="info-group">
+                  <label>Ürün Sayısı:</label>
+                  <span>{{ getTotalItemsCount() }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Items -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-list me-2"></i>
+              Sipariş Kalemleri
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="order-items">
+              <div *ngFor="let item of order.orderItems" class="order-item">
+                <div class="item-image">
+                  <img
+                    [src]="
+                      item.bookImageUrl ||
+                      'https://via.placeholder.com/80x100?text=No+Image'
+                    "
+                    [alt]="item.bookTitle"
+                    onerror="this.src='https://via.placeholder.com/80x100?text=No+Image'"
+                  />
+                </div>
+                <div class="item-details">
+                  <h6 class="item-title">{{ item.bookTitle }}</h6>
+                  <p class="item-author text-muted" *ngIf="item.bookAuthor">
+                    {{ item.bookAuthor }}
+                  </p>
+                  <div class="item-meta">
+                    <span class="item-price">
+                      {{ item.price | currency : "TRY" : "symbol" : "1.2-2" }}
+                    </span>
+                    <span class="item-quantity"> x {{ item.quantity }} </span>
+                    <span class="item-total">
+                      =
+                      {{
+                        item.totalPrice | currency : "TRY" : "symbol" : "1.2-2"
+                      }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shipping Info -->
+      <div class="col-md-4">
+        <!-- Customer Info -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-user me-2"></i>
+              Müşteri Bilgileri
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="customer-info">
+              <div class="info-group">
+                <label>Ad Soyad:</label>
+                <span>{{ order.shippingFullName }}</span>
+              </div>
+              <div class="info-group">
+                <label>Kullanıcı ID:</label>
+                <span>{{ order.userId }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shipping Address -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-shipping-fast me-2"></i>
+              Teslimat Adresi
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="shipping-address">
+              <div class="address-line">{{ order.shippingFullName }}</div>
+              <div class="address-line">{{ order.shippingAddress }}</div>
+              <div class="address-line">
+                {{ order.shippingCity }}, {{ order.shippingCountry }}
+              </div>
+              <div class="address-line">{{ order.shippingZipCode }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Actions -->
+        <div class="card" *ngIf="canDeleteOrder()">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-cogs me-2"></i>
+              İşlemler
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="d-grid gap-2">
+              <button
+                class="btn btn-outline-danger"
+                (click)="deleteOrder()"
+                type="button"
+              >
+                <i class="fas fa-trash me-2"></i>
+                Siparişi Sil
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

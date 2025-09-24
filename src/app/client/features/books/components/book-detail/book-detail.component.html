@@ -1,0 +1,181 @@
+<div class="container book-detail-page py-4" *ngIf="!loading && !error">
+  <a [routerLink]="['/books']" class="btn btn-link px-0 mb-3">
+    <i class="bi bi-arrow-left"></i> Geri dön
+  </a>
+
+  <div *ngIf="book; else notFound" class="row g-4">
+    <div class="col-12 col-md-4">
+      <div class="card shadow-sm">
+        <img
+          class="card-img-top book-detail-image"
+          [src]="
+            book.imageUrl || 'https://via.placeholder.com/600x800?text=No+Image'
+          "
+          [alt]="book.title"
+        />
+      </div>
+    </div>
+
+    <div class="col-12 col-md-8">
+      <h2 class="mb-1">{{ book.title }}</h2>
+      <div class="text-muted mb-3">Yazar: {{ book.author }}</div>
+
+      <!-- Categories Section -->
+      <div class="mb-3">
+        <strong class="text-muted d-block mb-2">Kategoriler:</strong>
+        <div class="d-flex flex-wrap gap-2">
+          <a
+            class="badge bg-primary text-decoration-none"
+            *ngFor="let c of book.categories"
+            [routerLink]="['/books/category', c.id]"
+            role="button"
+          >
+            {{ c.name }}
+          </a>
+        </div>
+      </div>
+
+      <!-- Publishers Section -->
+      <div class="mb-3" *ngIf="book.publishers && book.publishers.length > 0">
+        <strong class="text-muted d-block mb-2">Yayınevi:</strong>
+        <div class="d-flex flex-wrap gap-2">
+          <a
+            class="badge bg-success text-decoration-none"
+            *ngFor="let p of book.publishers"
+            [routerLink]="['/books/publisher', p.id]"
+            role="button"
+          >
+            {{ p.name }}
+          </a>
+        </div>
+      </div>
+
+      <div class="fs-5 fw-bold text-primary mb-3">
+        {{ book.price | currency : "TRY" : "symbol" : "1.2-2" }}
+      </div>
+
+      <!-- Book Details Grid -->
+      <div class="row g-3 mb-4">
+        <div class="col-md-6">
+          <div class="border rounded p-3 bg-light">
+            <div class="mb-2"><strong class="text-muted">ISBN:</strong></div>
+            <div>{{ book.isbn }}</div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="border rounded p-3 bg-light">
+            <div class="mb-2">
+              <strong class="text-muted">Yayın Tarihi:</strong>
+            </div>
+            <div>{{ book.publishedDate | date : "longDate" }}</div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="border rounded p-3 bg-light">
+            <div class="mb-2"><strong class="text-muted">Stok:</strong></div>
+            <div>{{ book.stockQuantity }} adet</div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="border rounded p-3 bg-light">
+            <div class="mb-2"><strong class="text-muted">Durum:</strong></div>
+            <div>
+              <span
+                class="badge"
+                [ngClass]="book.stockQuantity > 0 ? 'bg-success' : 'bg-danger'"
+              >
+                {{ book.stockQuantity > 0 ? "Stokta Var" : "Stokta Yok" }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Description Section -->
+      <div class="mb-4">
+        <h5 class="mb-3">Kitap Açıklaması</h5>
+        <div class="border rounded p-3 bg-light">
+          <p class="lead mb-0">{{ book.description }}</p>
+        </div>
+      </div>
+
+      <div class="mt-4 d-flex gap-2" *ngIf="!cartItem; else inCartTpl">
+        <button class="btn btn-primary" type="button" (click)="onAddToCart()">
+          <i class="bi bi-cart-plus me-1"></i>
+          Sepete Ekle
+        </button>
+
+        <a [routerLink]="['/books']" class="btn btn-primary">
+          Diğer kitaplar
+        </a>
+      </div>
+
+      <ng-template #inCartTpl>
+        <div class="mt-4 d-flex align-items-center gap-2 flex-wrap">
+          <div class="btn-group" role="group" aria-label="Quantity">
+            <button
+              class="btn btn-primary"
+              type="button"
+              (click)="onDecrease()"
+              [disabled]="!cartItem || cartItem.quantity <= 0"
+            >
+              <i class="bi bi-dash"></i>
+            </button>
+
+            <span class="px-3 py-2 border rounded bg-light">
+              {{ cartItem ? cartItem.quantity : 0 }}
+            </span>
+
+            <button
+              class="btn btn-primary"
+              type="button"
+              (click)="onIncrease()"
+              [disabled]="
+                !book ||
+                !cartItem ||
+                (book.stockQuantity != null &&
+                  cartItem.quantity >= book.stockQuantity)
+              "
+            >
+              <i class="bi bi-plus"></i>
+            </button>
+          </div>
+
+          <button
+            class="btn btn-outline-danger"
+            type="button"
+            (click)="onRemove()"
+          >
+            <i class="bi bi-trash"></i>
+            Kaldır
+          </button>
+
+          <button class="btn btn-success" type="button" (click)="onGoToCart()">
+            <i class="bi bi-cart-check"></i>
+            Sepete Git
+          </button>
+
+          <a [routerLink]="['/books']" class="btn btn-outline-primary">
+            Diğer kitaplar
+          </a>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>
+
+<ng-template #notFound>
+  <div class="alert alert-warning">Kitap bulunamadı.</div>
+</ng-template>
+
+<div *ngIf="loading" class="container py-4">
+  <div class="placeholder-glow">
+    <span class="placeholder col-8"></span>
+    <span class="placeholder col-6"></span>
+    <span class="placeholder col-4"></span>
+  </div>
+</div>
+
+<div *ngIf="error" class="container py-4">
+  <div class="alert alert-danger">{{ error }}</div>
+</div>
